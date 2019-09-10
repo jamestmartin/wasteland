@@ -86,7 +86,7 @@ permissions:
 # Staff ranks
 
    wasteland.official:
-      default: ops
+      default: op
    wasteland.rank.2ndlt:
       default: false
       children:
