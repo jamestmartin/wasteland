@@ -13,17 +13,31 @@ import me.jtmar.wasteland.commands.CommandRank;
 import me.jtmar.wasteland.commands.CommandRanks;
 import me.jtmar.wasteland.commands.CommandOfficial;
 import me.jtmar.wasteland.commands.CommandSetKills;
+import me.jtmar.wasteland.config.WastelandConfig;
 import me.jtmar.wasteland.listeners.ChatListener;
 import me.jtmar.wasteland.listeners.RankListener;
+import me.jtmar.wasteland.towny.TownyDependency;
+import me.jtmar.wasteland.towny.TownyDisabled;
+import me.jtmar.wasteland.towny.TownyPrefix;
 
 public class Wasteland extends JavaPlugin {
 	private static Wasteland instance;
 	
 	private Database database;
+	private WastelandConfig config;
 	private RankListener rankListener;
+	private TownyPrefix townyPrefix;
 	
 	public static Wasteland getInstance() {
 		return instance;
+	}
+	
+	public WastelandConfig getSettings() {
+		return config;
+	}
+	
+	public TownyPrefix getTownyPrefix() {
+		return townyPrefix;
 	}
 	
 	public Database getDatabase() {
@@ -32,6 +46,19 @@ public class Wasteland extends JavaPlugin {
 	
 	public void updatePlayerRank(Player player) throws SQLException {
 		rankListener.updatePlayerRank(player);
+	}
+	
+	private void initializeConfig() {
+		this.saveDefaultConfig();
+		this.config = new WastelandConfig(this.getConfig());
+	}
+	
+	private void initializeTowny() {
+		if (Wasteland.getInstance().getServer().getPluginManager().isPluginEnabled("Towny")) {
+			this.townyPrefix = new TownyDependency(config.prefixTownTagColor());
+		} else {
+			this.townyPrefix = new TownyDisabled();
+		}
 	}
 	
 	private void initializeDatabase() {
@@ -67,7 +94,8 @@ public class Wasteland extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		this.saveDefaultConfig();
+		initializeConfig();
+		initializeTowny();
 		initializeDatabase();
 		registerCommands();
 		registerListeners();
@@ -75,10 +103,12 @@ public class Wasteland extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		rankListener.close();
+		if (rankListener != null)
+			rankListener.close();
 		rankListener = null;
 		try {
-			database.close();
+			if (database != null)
+				database.close();
 		} catch (SQLException e) {
 			this.getLogger().log(Level.SEVERE, "Failed to close database.", e);
 		}

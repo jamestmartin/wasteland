@@ -1,1 +1,197 @@
 databaseFile: wasteland.sqlite3
+
+# Colors and decoration names must be written in ALL_CAPS_USING_UNDERLINES.
+# For a list of valid formatting codes, see https://minecraft.gamepedia.com/Formatting_codes#Color_codes
+
+# If `true`, chat will be prefixed with the player's Towny town tag if the town's tag is set.
+# These settings have no effect if Towny is not enabled.
+prefixTownTag: true
+prefixTownTagColor: BLUE
+
+# If `true`, the officer rank will also be used in regular chat, not just `/official` messages.
+# Even if false, this can still be set per-player using `wasteland.chat.officer`.
+preferOfficerRank: false
+
+# If `true`, chat shows as `[Pvt] HuskFodder` instead of `Pvt HuskFodder`.
+bracketChatRank: true
+
+#
+# enlistedRanksDefaultDecoration: <ColorCode>   # optional
+# enlistedRankDefaultDescription: <description> # optional, may reference the rank's number of {kills}.
+# enlistedRanks:
+#    <rankID>: # the rank permission will be `wasteland.rank.<rankID>`.
+#       name: <full rank name>            # optional, defaults to the rank ID
+#       abbreviation: <rank abbreviation> # optional, defaults to the name
+#       description: <rank description>   # optional, defaults to `enlistedRankDefaultDescription`.
+#       succeeds: <rankID>                # optional, the prior rank
+#       preferred: <bool>                 # optional, used to disambiguate multiple ranks
+#                                         #           which both succeed the same rank.
+#                                         #           Defaults to `true`.
+#       color: <ColorCode>                # optional
+#       decoration: <ColorCode>           # optional, defaults to `enlistedRanksDefaultDecoration`
+#       kills: <0+>                       # optional, but the rank won't be used without it
+#    ...
+#
+# The last listed rank that a player qualifies for will always be the one chosen.
+# Players will automatically be promoted to any ranks they have enough kills for.
+#
+
+# The default ranks are based on those of the U.S. marines.
+# The default colors are based on Terraria's rarity scheme (https://terraria.gamepedia.com/Rarity).
+
+# You may wish to remove the unused alternative ranks.
+
+enlistedRankDefaultDescription: "{kills} kills."
+enlistedRanks:
+   # A default rank which is not part of the marines.
+   fodder:
+      # `name` is optional and defaults to the `title`.
+      name: Zombie Fodder
+      # `abbreviation` is optional and defaults to the rank ID.
+      abbreviation: Fodder
+      description: This person probably won't survive long.
+      color: GRAY
+      kills: 0
+   pvt:
+      name: Private
+      abbreviation: Pvt
+      succeeds: fodder
+      color: WHITE
+      kills: 100
+   pfc:
+      name: Private First Class
+      abbreviation: PFC
+      succeeds: pvt
+      color: BLUE
+      kills: 250
+   lcpl:
+      name: Lieutenant Corporal
+      abbreviation: LCpl
+      succeeds: pfc
+      color: GREEN
+      kills: 500
+   cpl:
+      name: Corporal
+      abbreviation: Cpl
+      succeeds: lcpl
+      color: RED
+      kills: 1000
+   sgt:
+      name: Sergeant
+      abbreviation: Sgt
+      succeeds: cpl
+      color: LIGHT_PURPLE
+      kills: 2500
+   ssgt:
+      name: Staff Sergeant
+      abbreviation: SSgt
+      succeeds: sgt
+      color: YELLOW
+      kills: 5000
+   gysgt:
+      name: Gunnery Sergeant
+      abbreviation: GySgt
+      succeeds: ssgt
+      color: AQUA
+      kills: 10000
+   # Alternative DARK_RED rank, currently unused.
+   fstsgt:
+      name: First Sergeant
+      abbreviation: 1stSgt
+      description: Unused alternative rank for {kills} kills.
+      succeeds: gysgt
+      preferred: false
+      color: DARK_RED
+      kills: 25000
+   msgt:
+      name: Master Sergeant
+      abbreviation: MSgt
+      succeeds: gysgt
+      color: DARK_RED
+      kills: 25000
+   # Alternative DARK_PURPLE rank, currently unused.
+   sgtmaj:
+      name: Sergeant Major
+      abbreviation: SgtMaj
+      description: Unused alternative rank for {kills} kills.
+      succeeds: fstsgt
+      color: DARK_PURPLE
+      kills: 50000
+   mgysgt:
+      name: Master Gunnery Sergeant
+      abbreviation: MGySgt
+      description: A survivor of the wasteland, with over {kills} kills.
+      succeeds: msgt
+      color: DARK_PURPLE
+      kills: 50000
+
+# Officer ranks cannot be obtained by killing zombies.
+# They must manually be set using permissions.
+# Setting permissions for any rank also gives permissions for all previous ranks.
+# You may also optionally specify a rank `description`,
+# which will be listed to describe what a staff member of that rank does,
+# or what a donor of that rank donated.
+
+# It may be best to remove ranks that you are not using to avoid cluttering the ranks list.
+
+officerRankDefaultDecoration: BOLD
+officerRanks:
+   sndlt:
+      name: Second Lieutenant
+      abbreviation: 2ndLt
+      color: WHITE
+   fstlt:
+      name: First Lieutenant
+      abbreviation: 1stLt
+      succeeds: sndlt
+      color: BLUE
+   capt:
+      name: Captain
+      abbreviation: Capt
+      succeeds: fstlt
+      color: GREEN
+   maj:
+      name: Major
+      abbreviation: Maj
+      succeeds: capt
+      color: RED
+   ltcol:
+      name: Lieutenant Colonel
+      abbreviation: LtCol
+      succeeds: maj
+      color: LIGHT_PURPLE
+   col:
+      name: Colonel
+      abbreviation: Col
+      succeeds: ltcol
+      color: YELLOW
+   bgen:
+      name: Brigadier General
+      abbreviation: BGen
+      succeeds: col
+      color: AQUA
+   majgen:
+      name: Major General
+      abbreviation: MajGen
+      succeeds: bgen
+      color: DARK_RED
+   ltgen:
+      name: Lieutenant General
+      abbreviation: LtGen
+      succeeds: majgen
+      color: DARK_PURPLE
+   gen:
+      name: General
+      abbreviation: Gen
+      succeeds: ltgen
+      color: GOLD
+
+# The rank used by the console when it makes an official message.
+
+consoleRank:
+   name: General of the Armies # mandatory
+   abbreviation: GAS           # Currently unused
+   description: The server console.
+   color: GOLD
+   decoration: BOLD
+   

@@ -1,6 +1,7 @@
 package me.jtmar.wasteland.commands;
 
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.logging.Level;
 
 import org.bukkit.command.Command;
@@ -24,48 +25,65 @@ public class CommandRank implements CommandExecutor {
 		String has;
 		String is;
 		String need;
+		String playerNameS;
 		Player subject;
+		
+		boolean seeKills;
 		if (args.length == 1) {
 			subject = sender.getServer().getPlayer(args[0]);
-			if (!sender.equals(subject) && !sender.hasPermission("wasteland.kills.other")) {
-				sender.sendMessage("You do not have permission to view another player's kills.");
+			if (!sender.equals(subject) && !sender.hasPermission("wasteland.view-rank.other")) {
+				sender.sendMessage("You do not have permission to view another player's rank.");
 				return false;
 			}
 			if (subject == null) {
 				sender.sendMessage("Unknown player: " + args[0]);
 				return false;
 			}
+			seeKills = !sender.equals(subject) && sender.hasPermission("wasteland.view-rank.other.kills");
 			playerName = subject.getDisplayName();
 			has = " has ";
 			is = " is ";
 			need = " needs ";
+			playerNameS = playerName + "'s";
 		} else if (sender instanceof Player) {
-			if (!sender.hasPermission("wasteland.kills")) {
-				sender.sendMessage("You do not have permission to view your own kills.");
+			if (!sender.hasPermission("wasteland.view-rank")) {
+				sender.sendMessage("You do not have permission to view your own rank.");
 			}
+			seeKills = sender.hasPermission("wasteland.view-rank.kills");
 			subject = (Player) sender;
 			playerName = "You";
 			has = " have ";
 			is = " are ";
 			need = " need ";
+			playerNameS = "Your";
 		} else {
-			sender.sendMessage("You are not a player! Please specify a player whose kills you want to view.");
+			sender.sendMessage("You are not a player! Please specify a player whose rank you want to view.");
 			sender.sendMessage(command.getUsage());
 			return false;
 		}
 		
 		try {
 			int kills = Wasteland.getInstance().getDatabase().getPlayerKills(subject);
-			EnlistedRank rank = EnlistedRank.getRankFromKills(kills);
-			EnlistedRank nextRank = EnlistedRank.getNextRank(subject);
-			sender.sendMessage(playerName + is + "rank " + rank.formatFull() + ".");
-			String beginString = playerName + has + "killed " + kills + " zombies";
-			if (nextRank == null) {
-				sender.sendMessage(beginString + ".");
+			Optional<EnlistedRank> rank = EnlistedRank.getRankFromKills(kills);
+			Optional<EnlistedRank> nextRank = EnlistedRank.getNextRank(subject);
+			if (rank.isPresent()) {
+				sender.sendMessage(playerName + is + "rank " + rank.get().formatFull() + ".");
+			}
+			if (seeKills) {
+				String hasKilled = playerName + has + "killed " + kills + " zombies";
+				String andHasToGo;
+				if (nextRank.isPresent()) {
+					int moreZombies = nextRank.get().getKills().get() - kills;
+					andHasToGo = " and" + need + "to kill " + moreZombies
+							+ " more to reach " + nextRank.get().formatFull() + ".";
+				} else {
+					andHasToGo = " and" + has + "reached maximum rank.";
+				}
+				sender.sendMessage(hasKilled + andHasToGo);
+			} else if (nextRank.isPresent()) {
+				sender.sendMessage(playerNameS + " next rank will be " + nextRank.get().formatExtended() + ".");
 			} else {
-				int moreZombies = nextRank.getMinimumKills() - kills;
-				sender.sendMessage(beginString + " and " + need + "to kill " + moreZombies
-						+ " more to reach " + nextRank.formatFull() + ".");
+				sender.sendMessage(playerName + has + "reached maximum rank.");
 			}
 		} catch (SQLException e) {
 			sender.sendMessage("Command failed due to database exception. Contact the server administrator.");

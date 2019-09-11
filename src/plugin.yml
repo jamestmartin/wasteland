@@ -1,18 +1,17 @@
 name: Wasteland
-author: jtmar
+author: HuskFodder
 main: me.jtmar.wasteland.Wasteland
 version: 0.0.0
-api-version: 1.12
+api-version: 1.14
 
 softdepend: [Towny]
 
 commands:
    rank:
       description: View your rank and how many monsters you have killed.
-      usage: "Usage: /<command> [player]"
-      aliases: [zkills, kills]
-      permission: wasteland.kills
-      permission-message: You do not have permission to view your own kills.
+      usage: "Usage: /rank [<player>]"
+      permission: wasteland.view-rank
+      permission-message: You do not have permission to view your rank.
    ranks:
       description: List the server ranks.
       usage: "Usage: /<command>"
@@ -28,102 +27,32 @@ commands:
       permission-message: You are not a staff member.
 
 permissions:
-   wasteland.kills:
-      description: Allows you to view your /kills.
+   wasteland.chat.officer:
+      description: Show a player's officer rank even in normal chat.
+      default: false
+
+   wasteland.view-rank:
+      description: Allows you to view your /rank.
       default: true
-   wasteland.kills.other:
-      description: Allows you to view another player's /kills.
-      default: op
+   wasteland.view-rank.kills:
+      description: Allows you to see how many kills you have using /rank.
+      default: true
       children:
-         wasteland.kills: true
+         wasteland.view-rank: true
+   wasteland.view-rank.other:
+      description: Allows you to see someone else's /rank.
+      default: true
+      children:
+         wasteland.view-rank: true
+   wasteland.view-rank.other.kills:
+      description: Allows you to see how many kills someone else has using /rank.
+      default: false
+      children:
+         wasteland.view-rank.kills: true
+         wasteland.view-rank.other: true
+
    wasteland.kills.set:
       description: Allows you to set player kills using /setkills.
       default: op
       children:
-         wasteland.kills.other: true
-   
-# Kill ranks      
-   
-   wasteland.rank.fodder:
-      default: true
-   wasteland.rank.pvt:
-      default: false
-      children:
-         wasteland.rank.fodder: true
-   wasteland.rank.pfc:
-      default: false
-      children:
-         wasteland.rank.pvt: true
-   wasteland.rank.lcpl:
-      default: false
-      children:
-         wasteland.rank.pfc: true
-   wasteland.rank.cpl:
-      default: false
-      children:
-         wasteland.rank.lcpl: true
-   wasteland.rank.sgt:
-      default: false
-      children:
-         wasteland.rank.cpl: true
-   wasteland.rank.ssgt:
-      default: false
-      children:
-         wasteland.rank.sgt: true
-   wasteland.rank.gysgt:
-      default: false
-      children:
-         wasteland.rank.ssgt: true
-   wasteland.rank.msgt:
-      default: false
-      children:
-         wasteland.rank.gysgt: true
-   wasteland.rank.mgysgt:
-      default: false
-      children:
-         wasteland.rank.msgt: true
-
-# Staff ranks
-
-   wasteland.official:
-      default: op
-   wasteland.rank.2ndlt:
-      default: false
-      children:
-         wasteland.official: true
-   wasteland.rank.1stlt:
-      default: false
-      children:
-         wasteland.rank.2ndlt: true
-   wasteland.rank.capt:
-      default: false
-      children:
-         wasteland.rank.1stlt: true
-   wasteland.rank.maj:
-      default: false
-      children:
-         wasteland.rank.capt: true
-   wasteland.rank.ltcol:
-      default: false
-      children:
-         wasteland.rank.maj: true
-   wasteland.rank.col:
-      default: false
-      children:
-         wasteland.rank.ltcol: true
-   wasteland.rank.bgen:
-      default: false
-      children:
-         wasteland.rank.col: true
-   wasteland.rank.majgen:
-      default: false
-      children:
-         wasteland.rank.bgen: true
-   wasteland.rank.ltgen:
-      default: false
-      children:
-         wasteland.rank.majgen: true
-   wasteland.rank.gen:
-      default: false
-      children:
-         wasteland.rank.ltgen: true
+         wasteland.view-rank.other.kills: true

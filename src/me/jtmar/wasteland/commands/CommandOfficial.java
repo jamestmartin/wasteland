@@ -1,12 +1,15 @@
 package me.jtmar.wasteland.commands;
 
+import java.util.Optional;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.jtmar.wasteland.ranks.OfficerRank;
-import net.md_5.bungee.api.ChatColor;
+import me.jtmar.wasteland.Wasteland;
+import me.jtmar.wasteland.ranks.Rank;
 
 public class CommandOfficial implements CommandExecutor {
 	@Override
@@ -19,17 +22,26 @@ public class CommandOfficial implements CommandExecutor {
 		String senderFormat;
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
-			OfficerRank rank = OfficerRank.getRank(player);
-			if (rank == null) {
+			Optional<Rank> rank = Rank.getOfficerRank(player);
+			if (!rank.isPresent()) {
 				sender.sendMessage("You are not a staff member.");
 				return true;
 			}
-			senderFormat = "[" + rank.format() + ChatColor.RESET + "] " + player.getDisplayName();
+			String rankFormat = rank.get().formatAbbreviated() + ChatColor.RESET;
+			if (Wasteland.getInstance().getSettings().bracketChatRank()) {
+				rankFormat = ChatColor.RESET + "[" + rankFormat + "]";
+			}
+			senderFormat = rankFormat + " " + player.getDisplayName();
 		} else {
-			senderFormat = ChatColor.GOLD + ChatColor.BOLD.toString() + "The General of the Armies";
+			Optional<Rank> consoleRank = Wasteland.getInstance().getSettings().consoleRank();
+			if (!consoleRank.isPresent()) {
+				sender.sendMessage("No console rank is configured to send messages with!");
+				return true;
+			}
+			senderFormat = consoleRank.get().formatFull();
 		}
 		
-		sender.getServer().broadcastMessage(senderFormat + ChatColor.RESET + ": " + ChatColor.ITALIC + String.join(" ", args));
+		sender.getServer().broadcastMessage(senderFormat + ChatColor.RESET + ": " + String.join(" ", args));
 		return true;
 	}
 }

@@ -3,9 +3,11 @@ package me.jtmar.wasteland.listeners;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,8 +19,6 @@ import org.bukkit.permissions.PermissionAttachment;
 
 import me.jtmar.wasteland.Wasteland;
 import me.jtmar.wasteland.ranks.EnlistedRank;
-import me.jtmar.wasteland.ranks.Rank;
-import net.md_5.bungee.api.ChatColor;
 
 public class RankListener implements Listener, AutoCloseable {
 	private Map<UUID, PermissionAttachment> attachments = new HashMap<>();
@@ -37,8 +37,10 @@ public class RankListener implements Listener, AutoCloseable {
 		PermissionAttachment attachment = player.addAttachment(Wasteland.getInstance());
 		attachments.put(player.getUniqueId(), attachment);
 		int kills = Wasteland.getInstance().getDatabase().getPlayerKills(player);
-		EnlistedRank rank = EnlistedRank.getRankFromKills(kills);
-		attachments.get(player.getUniqueId()).setPermission(rank.getPermission(), true);
+		Optional<EnlistedRank> rank = EnlistedRank.getRankFromKills(kills);
+		if (rank.isPresent()) {
+			attachment.setPermission(rank.get().getPermission(), true);
+		}
 	}
 	
 	private void removeAttachment(Player player) {
@@ -79,12 +81,25 @@ public class RankListener implements Listener, AutoCloseable {
 		case ZOMBIE_VILLAGER:
 			try {
 				Wasteland.getInstance().getDatabase().incrementPlayerKills(player);
-				Rank oldRank = EnlistedRank.getRank(player);
+				Optional<EnlistedRank> oldRank = EnlistedRank.getEnlistedRank(player);
 				updatePlayerRank(player);
-				Rank newRank = EnlistedRank.getRank(player);
-				if (!newRank.equals(oldRank)) {
-					final String formatString = "%s " + ChatColor.RESET + "has been promoted from %s " + ChatColor.RESET + "to %s" + ChatColor.RESET + "!";
-					player.getServer().broadcastMessage(String.format(formatString, player.getDisplayName(), oldRank.formatFull(), newRank.formatFull()));
+				Optional<EnlistedRank> newRank = EnlistedRank.getEnlistedRank(player);
+				
+				
+				if (newRank.isPresent()) {
+					final String formatString;
+					if (oldRank.isPresent()) {
+						if (!newRank.get().equals(oldRank.get())) {
+							formatString = "%s" + ChatColor.RESET + " has been promoted from %s " + ChatColor.RESET + "to %s" + ChatColor.RESET + "!";
+							player.getServer().broadcastMessage(
+									String.format(formatString, player.getDisplayName(),
+											oldRank.get().formatFull(), newRank.get().formatFull()));
+						}
+					} else {
+						formatString = "%s" + ChatColor.RESET + " has been promoted to %s" + ChatColor.RESET + "!";
+						player.getServer().broadcastMessage(
+								String.format(formatString, player.getDisplayName(), newRank.get()));
+					}
 				}
 			} catch (SQLException e) {
 				Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to increment player kills.", e);
