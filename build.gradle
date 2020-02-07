@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group 'me.jamestmartin'
+version '0.1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+  mavenCentral()
+
+  maven {
+    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+    content {
+      includeGroup 'org.bukkit'
+      includeGroup 'org.spigotmc'
+    }
+  }
+
+  maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+  maven {
+    name = "Towny"
+    url = "https://maven.pkg.github.com/TownyAdvanced/Towny"
+    credentials {
+      username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+      password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+    }
+  }
+}
+
+dependencies {
+  compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+  compileOnly 'com.palmergames.bukkit.towny:Towny:0.95.2.13'
+}

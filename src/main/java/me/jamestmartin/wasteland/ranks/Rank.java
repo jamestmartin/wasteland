@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.ranks;
+package me.jamestmartin.wasteland.ranks;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -6,14 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.config.WastelandConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-
-import me.jtmar.wasteland.Wasteland;
-import me.jtmar.wasteland.config.WastelandConfig;
 
 public class Rank {
 	private final String id, abbreviation, name;

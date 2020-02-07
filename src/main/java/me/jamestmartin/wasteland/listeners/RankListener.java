@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.listeners;
+package me.jamestmartin.wasteland.listeners;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -17,8 +17,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 
-import me.jtmar.wasteland.Wasteland;
-import me.jtmar.wasteland.ranks.EnlistedRank;
+import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.ranks.EnlistedRank;
 
 public class RankListener implements Listener, AutoCloseable {
 	private Map<UUID, PermissionAttachment> attachments = new HashMap<>();

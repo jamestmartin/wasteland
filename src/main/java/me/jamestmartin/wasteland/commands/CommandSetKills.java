@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.commands;
+package me.jamestmartin.wasteland.commands;
 
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -8,7 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.jtmar.wasteland.Wasteland;
+import me.jamestmartin.wasteland.Wasteland;
 
 public class CommandSetKills implements CommandExecutor {
 	@Override

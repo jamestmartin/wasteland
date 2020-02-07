@@ -1,4 +1,4 @@
-package me.jtmar.wasteland;
+package me.jamestmartin.wasteland;
 
 import java.io.File;
 import java.io.IOException;

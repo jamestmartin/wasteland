@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.ranks;
+package me.jamestmartin.wasteland.ranks;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -11,7 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-import me.jtmar.wasteland.Wasteland;
+import me.jamestmartin.wasteland.Wasteland;
 
 public class EnlistedRank extends Rank {
 	private final Optional<Integer> kills;

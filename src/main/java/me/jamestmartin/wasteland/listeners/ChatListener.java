@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.listeners;
+package me.jamestmartin.wasteland.listeners;
 
 import java.util.Optional;
 
@@ -8,9 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import me.jtmar.wasteland.Wasteland;
-import me.jtmar.wasteland.ranks.EnlistedRank;
-import me.jtmar.wasteland.ranks.Rank;
+import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.ranks.EnlistedRank;
+import me.jamestmartin.wasteland.ranks.Rank;
 
 public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)

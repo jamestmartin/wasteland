@@ -1,8 +1,8 @@
 name: Wasteland
 author: HuskFodder
-main: me.jtmar.wasteland.Wasteland
-version: 0.0.0
-api-version: 1.14
+main: me.jamestmartin.wasteland.Wasteland
+version: 0.1.0
+api-version: 1.15
 
 softdepend: [Towny]
 

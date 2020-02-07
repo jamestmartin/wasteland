@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.towny;
+package me.jamestmartin.wasteland.towny;
 
 import java.util.Optional;
 

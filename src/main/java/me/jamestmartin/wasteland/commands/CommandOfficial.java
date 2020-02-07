@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.commands;
+package me.jamestmartin.wasteland.commands;
 
 import java.util.Optional;
 
@@ -8,8 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.jtmar.wasteland.Wasteland;
-import me.jtmar.wasteland.ranks.Rank;
+import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.ranks.Rank;
 
 public class CommandOfficial implements CommandExecutor {
 	@Override

@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.commands;
+package me.jamestmartin.wasteland.commands;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -9,8 +9,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.jtmar.wasteland.Wasteland;
-import me.jtmar.wasteland.ranks.EnlistedRank;
+import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.ranks.EnlistedRank;
 
 public class CommandRank implements CommandExecutor {
 	@Override

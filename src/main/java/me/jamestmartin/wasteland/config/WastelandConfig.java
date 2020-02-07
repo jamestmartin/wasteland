@@ -1,4 +1,4 @@
-package me.jtmar.wasteland.config;
+package me.jamestmartin.wasteland.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,8 +7,8 @@ import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
-import me.jtmar.wasteland.ranks.EnlistedRank;
-import me.jtmar.wasteland.ranks.Rank;
+import me.jamestmartin.wasteland.ranks.EnlistedRank;
+import me.jamestmartin.wasteland.ranks.Rank;
 
 public class WastelandConfig {
 	private final String databaseFile;

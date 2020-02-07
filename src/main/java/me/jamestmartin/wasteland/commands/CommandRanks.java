@@ -1,13 +1,13 @@
-package me.jtmar.wasteland.commands;
+package me.jamestmartin.wasteland.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import me.jtmar.wasteland.Wasteland;
-import me.jtmar.wasteland.config.WastelandConfig;
-import me.jtmar.wasteland.ranks.EnlistedRank;
-import me.jtmar.wasteland.ranks.Rank;
+import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.config.WastelandConfig;
+import me.jamestmartin.wasteland.ranks.EnlistedRank;
+import me.jamestmartin.wasteland.ranks.Rank;
 
 public class CommandRanks implements CommandExecutor {
 	private String makeElement(Rank rank) {

@@ -1,24 +1,23 @@
-package me.jtmar.wasteland;
+package me.jamestmartin.wasteland;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
+import me.jamestmartin.wasteland.commands.CommandOfficial;
+import me.jamestmartin.wasteland.commands.CommandRank;
+import me.jamestmartin.wasteland.commands.CommandRanks;
+import me.jamestmartin.wasteland.commands.CommandSetKills;
+import me.jamestmartin.wasteland.config.WastelandConfig;
+import me.jamestmartin.wasteland.listeners.ChatListener;
+import me.jamestmartin.wasteland.listeners.RankListener;
+import me.jamestmartin.wasteland.towny.TownyDependency;
+import me.jamestmartin.wasteland.towny.TownyDisabled;
+import me.jamestmartin.wasteland.towny.TownyPrefix;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import me.jtmar.wasteland.commands.CommandRank;
-import me.jtmar.wasteland.commands.CommandRanks;
-import me.jtmar.wasteland.commands.CommandOfficial;
-import me.jtmar.wasteland.commands.CommandSetKills;
-import me.jtmar.wasteland.config.WastelandConfig;
-import me.jtmar.wasteland.listeners.ChatListener;
-import me.jtmar.wasteland.listeners.RankListener;
-import me.jtmar.wasteland.towny.TownyDependency;
-import me.jtmar.wasteland.towny.TownyDisabled;
-import me.jtmar.wasteland.towny.TownyPrefix;
 
 public class Wasteland extends JavaPlugin {
 	private static Wasteland instance;
