@@ -9,9 +9,14 @@ softdepend: [Towny]
 commands:
    rank:
       description: View your rank and how many monsters you have killed.
-      usage: "Usage: /rank [<player>]"
+      usage: "Usage: /<command> [player]"
       permission: wasteland.view-rank
       permission-message: You do not have permission to view your rank.
+   rankeligiblemobs:
+      description: View a list of monsters which you can kill to get promoted.
+      usage: "Usage: /<command>"
+      permission: wasteland.view-eligible-mobs
+      permission-message: You cannot view the list of promotion-eligible monsters.
    ranks:
       description: List the server ranks.
       usage: "Usage: /<command>"
@@ -56,3 +61,8 @@ permissions:
       default: op
       children:
          wasteland.view-rank.other.kills: true
+         
+   wasteland.view-eligible-mobs:
+      description: Allows you to see the specific list of what mobs count towards promotion with /rankeligiblemobs.
+      default: true
+      

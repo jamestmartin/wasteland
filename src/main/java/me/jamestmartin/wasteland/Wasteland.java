@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import me.jamestmartin.wasteland.commands.CommandOfficial;
 import me.jamestmartin.wasteland.commands.CommandRank;
+import me.jamestmartin.wasteland.commands.CommandRankEligibleMobs;
 import me.jamestmartin.wasteland.commands.CommandRanks;
 import me.jamestmartin.wasteland.commands.CommandSetKills;
 import me.jamestmartin.wasteland.config.WastelandConfig;
@@ -77,15 +78,16 @@ public class Wasteland extends JavaPlugin {
 	}
 	
 	private void registerCommands() {
-		this.getCommand("rank").setExecutor(new CommandRank());
+		this.getCommand("rank").setExecutor(new CommandRank(config.eligibleMobsName()));
+		this.getCommand("rankeligiblemobs").setExecutor(new CommandRankEligibleMobs(config.eligibleMobsName(), config.eligibleMobs()));
+        this.getCommand("ranks").setExecutor(new CommandRanks());
 		this.getCommand("setkills").setExecutor(new CommandSetKills());
 		this.getCommand("official").setExecutor(new CommandOfficial());
-		this.getCommand("ranks").setExecutor(new CommandRanks());
 	}
 	
 	private void registerListeners() {
 		PluginManager manager = this.getServer().getPluginManager();
-		rankListener = new RankListener();
+		rankListener = new RankListener(config.eligibleMobs());
 		manager.registerEvents(rankListener, this);
 		manager.registerEvents(new ChatListener(), this);
 	}

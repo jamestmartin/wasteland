@@ -13,6 +13,12 @@ import me.jamestmartin.wasteland.Wasteland;
 import me.jamestmartin.wasteland.ranks.EnlistedRank;
 
 public class CommandRank implements CommandExecutor {
+    private final String eligibleMobsName;
+    
+    public CommandRank(String eligibleMobsName) {
+        this.eligibleMobsName = eligibleMobsName;
+    }
+    
 	@Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length > 1) {
@@ -70,7 +76,7 @@ public class CommandRank implements CommandExecutor {
 				sender.sendMessage(playerName + is + "rank " + rank.get().formatFull() + ".");
 			}
 			if (seeKills) {
-				String hasKilled = playerName + has + "killed " + kills + " zombies";
+				String hasKilled = playerName + has + "killed " + kills + " " + eligibleMobsName;
 				String andHasToGo;
 				if (nextRank.isPresent()) {
 					int moreZombies = nextRank.get().getKills().get() - kills;

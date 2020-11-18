@@ -195,3 +195,18 @@ consoleRank:
    color: GOLD
    decoration: BOLD
    
+# The entity types which, if killed, will count towards your enlisted rank.
+# Each value must be a valid Bukkit EntityType (e.g. `WITHER_SKELETON` or `ENDERMAN`),
+# or one of my built-in entity collections (`bosses`, hostiles`, `monsters`, `neutrals`, `zombies`, `spiders`).
+# Beware that `hostiles` does not include endermen, spiders, or zombified piglins,
+# although they are included in `monsters`.
+#
+# The wiki lists which mobs are bosses, hostile, or neutral: https://minecraft.gamepedia.com/Mob#List_of_mobs
+# Monsters are defined as the mobs which are eligible for the Monster Hunter achievement
+# (all hostile mobs plus endermen, spiders, and zombified piglins).
+
+eligibleMobs: [monsters]
+eligibleMobsName: monsters
+
+
+   

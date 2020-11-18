@@ -1,6 +1,7 @@
 package me.jamestmartin.wasteland.listeners;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,8 +24,11 @@ import me.jamestmartin.wasteland.ranks.EnlistedRank;
 
 public class RankListener implements Listener, AutoCloseable {
 	private Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+	private final Collection<EntityType> eligibleMobs;
 	
-	public RankListener() {
+	public RankListener(Collection<EntityType> eligibleMobs) {
+	    this.eligibleMobs = eligibleMobs;
+	    
 		for (Player player : Wasteland.getInstance().getServer().getOnlinePlayers()) {
 			try {
 				initializePlayer(player);
@@ -73,41 +78,33 @@ public class RankListener implements Listener, AutoCloseable {
 	public void onEntityDeath(EntityDeathEvent event) {
 		Player player = event.getEntity().getKiller();
 		if (player == null) return;
-		switch (event.getEntityType()) {
-		case HUSK:
-		case ZOMBIFIED_PIGLIN:
-		case ZOMBIE:
-		case ZOMBIE_VILLAGER:
-		case ZOGLIN:
-		 
-			try {
-				Wasteland.getInstance().getDatabase().incrementPlayerKills(player);
-				Optional<EnlistedRank> oldRank = EnlistedRank.getEnlistedRank(player);
-				updatePlayerRank(player);
-				Optional<EnlistedRank> newRank = EnlistedRank.getEnlistedRank(player);
-				
-				
-				if (newRank.isPresent()) {
-					final String formatString;
-					if (oldRank.isPresent()) {
-						if (!newRank.get().equals(oldRank.get())) {
-							formatString = "%s" + ChatColor.RESET + " has been promoted from %s " + ChatColor.RESET + "to %s" + ChatColor.RESET + "!";
-							player.getServer().broadcastMessage(
-									String.format(formatString, player.getDisplayName(),
-											oldRank.get().formatFull(), newRank.get().formatFull()));
-						}
-					} else {
-						formatString = "%s" + ChatColor.RESET + " has been promoted to %s" + ChatColor.RESET + "!";
-						player.getServer().broadcastMessage(
-								String.format(formatString, player.getDisplayName(), newRank.get()));
-					}
-				}
-			} catch (SQLException e) {
-				Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to increment player kills.", e);
-			}
-		default:
-			break;
-		}
+		if (!eligibleMobs.contains(event.getEntityType())) return;
+		
+		try {
+            Wasteland.getInstance().getDatabase().incrementPlayerKills(player);
+            Optional<EnlistedRank> oldRank = EnlistedRank.getEnlistedRank(player);
+            updatePlayerRank(player);
+            Optional<EnlistedRank> newRank = EnlistedRank.getEnlistedRank(player);
+            
+            
+            if (newRank.isPresent()) {
+                final String formatString;
+                if (oldRank.isPresent()) {
+                    if (!newRank.get().equals(oldRank.get())) {
+                        formatString = "%s" + ChatColor.RESET + " has been promoted from %s " + ChatColor.RESET + "to %s" + ChatColor.RESET + "!";
+                        player.getServer().broadcastMessage(
+                                String.format(formatString, player.getDisplayName(),
+                                        oldRank.get().formatFull(), newRank.get().formatFull()));
+                    }
+                } else {
+                    formatString = "%s" + ChatColor.RESET + " has been promoted to %s" + ChatColor.RESET + "!";
+                    player.getServer().broadcastMessage(
+                            String.format(formatString, player.getDisplayName(), newRank.get()));
+                }
+            }
+        } catch (SQLException e) {
+            Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to increment player kills.", e);
+        }
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -118,6 +115,7 @@ public class RankListener implements Listener, AutoCloseable {
 	
 	@Override
 	public void close() {
+	    // Trying to remove attachments throws an error. Perhaps it's done automatically?
 		/*for(Map.Entry<UUID, PermissionAttachment> attachment : attachments.entrySet()) {
 			Wasteland.getInstance().getServer().getPlayer(attachment.getKey())
 				.removeAttachment(attachment.getValue());

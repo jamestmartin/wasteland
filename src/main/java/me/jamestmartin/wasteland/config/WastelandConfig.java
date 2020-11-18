@@ -1,11 +1,16 @@
 package me.jamestmartin.wasteland.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 
 import me.jamestmartin.wasteland.ranks.EnlistedRank;
 import me.jamestmartin.wasteland.ranks.Rank;
@@ -21,6 +26,9 @@ public class WastelandConfig {
 	private final Collection<Rank> officerRanks;
 	private final Optional<Rank> consoleRank;
 	
+	private final Set<EntityType> eligibleMobs;
+	private final String eligibleMobsName;
+	
 	/** Orphaned method. */
 	public static Optional<ChatColor> readColor(ConfigurationSection c, String path) {
 		return (Optional<ChatColor>) Optional.ofNullable(c.getString(path)).map(ChatColor::valueOf);
@@ -33,7 +41,6 @@ public class WastelandConfig {
 		this.preferOfficerRank = c.getBoolean("preferOfficerRank", false);
 		this.bracketChatRank = c.getBoolean("bracketChatRank", true);
 		this.nameUsesRankColor = c.getBoolean("nameUsesRankColor", false);
-		
 		
 		ConfigurationSection ers = c.getConfigurationSection("enlistedRanks");
 		ArrayList<EnlistedRank> enlistedRanks = new ArrayList<>();
@@ -75,6 +82,14 @@ public class WastelandConfig {
 		} else {
 			this.consoleRank = Optional.of(new Rank(Optional.empty(), Optional.empty(), crs));
 		}
+		
+		List<String> eligibleMobTypes = c.getStringList("eligibleMobs");
+		this.eligibleMobs = new HashSet<>();
+		for (String mobType : eligibleMobTypes) {
+		    this.eligibleMobs.addAll(Arrays.asList(EntityTypes.lookupEntityType(mobType)));
+		}
+		
+		this.eligibleMobsName = c.getString("eligibleMobsName");
 	}
 	
 	public String databaseFile() { return this.databaseFile; }
@@ -89,4 +104,9 @@ public class WastelandConfig {
 	public Collection<EnlistedRank> enlistedRanks() { return this.enlistedRanks; }
 	public Collection<Rank> officerRanks() { return this.officerRanks; }
 	public Optional<Rank> consoleRank() { return this.consoleRank; }
+	
+	/** The entity types which, if killed, will count towards your enlisted rank. */
+	public Set<EntityType> eligibleMobs() { return this.eligibleMobs; }
+	/** The term for the eligible mobs, e.g. "zombies" or "hostile mobs". */
+	public String eligibleMobsName() { return this.eligibleMobsName; }
 }

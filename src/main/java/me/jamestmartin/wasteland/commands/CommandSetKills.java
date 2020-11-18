@@ -66,9 +66,12 @@ public class CommandSetKills implements CommandExecutor {
 		}
 		
 		try {
+		    int previousKills = Wasteland.getInstance().getDatabase().getPlayerKills(subject);
+		    
 			Wasteland.getInstance().getDatabase().setPlayerKills(subject, kills);
 			Wasteland.getInstance().updatePlayerRank(subject);
 			sender.sendMessage(playerNowHas + " " + kills + " kills.");
+			Wasteland.getInstance().getLogger().info(sender.getName() + " has changed the number of kills " + subject.getName() + " has from " + previousKills + " to " + kills);
 		} catch (SQLException e) {
 			Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to set player kills.", e);
 			sender.sendMessage("ERROR: Failed to update player kills. Please notify a server administrator.");
