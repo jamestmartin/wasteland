@@ -73,12 +73,13 @@ public class RankListener implements Listener, AutoCloseable {
 	public void onEntityDeath(EntityDeathEvent event) {
 		Player player = event.getEntity().getKiller();
 		if (player == null) return;
-		
 		switch (event.getEntityType()) {
 		case HUSK:
-		case PIG_ZOMBIE:
+		case ZOMBIFIED_PIGLIN:
 		case ZOMBIE:
 		case ZOMBIE_VILLAGER:
+		case ZOGLIN:
+		 
 			try {
 				Wasteland.getInstance().getDatabase().incrementPlayerKills(player);
 				Optional<EnlistedRank> oldRank = EnlistedRank.getEnlistedRank(player);

@@ -6,7 +6,7 @@ plugins {
 group 'me.jamestmartin'
 version '0.1.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 14
 
 repositories {
   mavenCentral()
@@ -27,12 +27,12 @@ repositories {
     url = "https://maven.pkg.github.com/TownyAdvanced/Towny"
     credentials {
       username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-      password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+      password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
     }
   }
 }
 
 dependencies {
-  compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
-  compileOnly 'com.palmergames.bukkit.towny:Towny:0.95.2.13'
+  compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
+  compileOnly 'com.palmergames.bukkit.towny:Towny:0.96.2.17'
 }
