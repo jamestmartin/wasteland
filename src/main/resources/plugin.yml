@@ -31,6 +31,13 @@ commands:
       permission: wasteland.official
       permission-message: You are not a staff member with an officer rank.
 
+   # debug commands
+   debugspawnweights:
+      description: View the monster spawn weights at the block you are looking at.
+      usage: "Usage: /<command>"
+      permission: wasteland.debug.spawns.weights
+      permission-message: You do not have permission to view spawn debug information.
+
 permissions:
    wasteland.chat.officer:
       description: Show a player's officer rank even in normal chat.
@@ -65,3 +72,17 @@ permissions:
    wasteland.view-eligible-mobs:
       description: Allows you to see the specific list of what mobs count towards promotion with /rankeligiblemobs.
       default: true
+
+   wasteland.debug:
+      description: Wasteland plugin debug commands.
+      default: false
+      children:
+         wasteland.debug.spawns: true
+   wasteland.debug.spawns:
+      description: Commands for debugging the spawning system.
+      default: false
+      children:
+         wasteland.debug.spawns.weights: true
+   wasteland.debug.spawns.weights:
+      description: Allows you to see the spawn weights by mob type at a block.
+      default: false

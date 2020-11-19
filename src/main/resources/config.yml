@@ -194,7 +194,7 @@ consoleRank:
    description: The server console.
    color: GOLD
    decoration: BOLD
-   
+
 # The entity types which, if killed, will count towards your enlisted rank.
 # Each value must be a valid Bukkit EntityType (e.g. `WITHER_SKELETON` or `ENDERMAN`),
 # or one of my built-in entity collections (`bosses`, hostiles`, `monsters`, `neutrals`, `zombies`, `spiders`).
@@ -208,5 +208,51 @@ consoleRank:
 eligibleMobs: [monsters]
 eligibleMobsName: monsters
 
-
+spawns:
+   CREEPER:
+      # double spawns in the first and third quarter
+      phases:
+         THIRD_QUARTER: 2.0
+         FIRST_QUARTER: 2.0
+      # only spawn below 50 blocks, the lower the more frequent
+      height:
+         maximum: 50
+   SKELETON:
+      phases:
+         THIRD_QUARTER: 2.0
+         FIRST_QUARTER: 2.0
+      # only spawn above 80 blocks, the higher the more frequent
+      height:
+         minimum: 80
+   SPIDER:
+      light:
+          maximum: 5
+          weights:
+            # spawn up to light level 1
+            sun: 4.3
+            # spawn up to light level 3
+            moon:  1.5
+            # spawn up to light level 4
+            block: 1.2
+      # very strongly prefers dark moon phases
+      phases:
+          NEW: 3.0
+          WANING_GIBBOUS: 1.5
+          WAXING_GIBBOUS: 1.5
+          THIRD_QUARTER: 0.5
+          FIRST_QUARTER: 0.5
+          FULL: 0.3
+   ZOMBIE:
+      light:
+         weights:
+            # Zombies are only affected by the sky light level a quarter as much,
+            # meaning they can still sometimes spawn in broad daylight.
+            # They also slightly benefit from moonlight.
+           sun: 0.25
+           moon: -0.2
+      phases:
+         FULL: 2.0
+         WAXING_GIBBOUS: 1.5
+         WANING_GIBBOUS: 1.5
+         NEW: 0.5
    

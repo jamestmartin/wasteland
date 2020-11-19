@@ -3,8 +3,10 @@ package me.jamestmartin.wasteland.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import org.bukkit.entity.EntityType;
 
 import me.jamestmartin.wasteland.ranks.EnlistedRank;
 import me.jamestmartin.wasteland.ranks.Rank;
+import me.jamestmartin.wasteland.spawns.MonsterType;
 
 public class WastelandConfig {
 	private final String databaseFile;
@@ -28,7 +31,9 @@ public class WastelandConfig {
 	
 	private final Set<EntityType> eligibleMobs;
 	private final String eligibleMobsName;
-	
+
+	private final Map<MonsterType, MonsterSpawnConfig> spawns;
+
 	/** Orphaned method. */
 	public static Optional<ChatColor> readColor(ConfigurationSection c, String path) {
 		return (Optional<ChatColor>) Optional.ofNullable(c.getString(path)).map(ChatColor::valueOf);
@@ -88,8 +93,18 @@ public class WastelandConfig {
 		for (String mobType : eligibleMobTypes) {
 		    this.eligibleMobs.addAll(Arrays.asList(EntityTypes.lookupEntityType(mobType)));
 		}
-		
+
 		this.eligibleMobsName = c.getString("eligibleMobsName");
+
+		ConfigurationSection mss = c.getConfigurationSection("spawns");
+		this.spawns = new HashMap<>();
+		if (mss != null) {
+		    for (String typeName : mss.getKeys(false)) {
+		        MonsterType type = MonsterType.valueOf(typeName);
+		        MonsterSpawnConfig config = new MonsterSpawnConfig(mss.getConfigurationSection(typeName));
+		        this.spawns.put(type, config);
+		    }
+		}
 	}
 	
 	public String databaseFile() { return this.databaseFile; }
@@ -109,4 +124,6 @@ public class WastelandConfig {
 	public Set<EntityType> eligibleMobs() { return this.eligibleMobs; }
 	/** The term for the eligible mobs, e.g. "zombies" or "hostile mobs". */
 	public String eligibleMobsName() { return this.eligibleMobsName; }
+	
+	public Map<MonsterType, MonsterSpawnConfig> spawns() { return this.spawns; }
 }

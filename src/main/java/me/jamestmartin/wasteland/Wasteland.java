@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
+import me.jamestmartin.wasteland.commands.CommandDebugSpawnWeights;
 import me.jamestmartin.wasteland.commands.CommandOfficial;
 import me.jamestmartin.wasteland.commands.CommandRank;
 import me.jamestmartin.wasteland.commands.CommandRankEligibleMobs;
@@ -13,6 +14,7 @@ import me.jamestmartin.wasteland.commands.CommandSetKills;
 import me.jamestmartin.wasteland.config.WastelandConfig;
 import me.jamestmartin.wasteland.listeners.ChatListener;
 import me.jamestmartin.wasteland.listeners.RankListener;
+import me.jamestmartin.wasteland.spawns.WastelandSpawner;
 import me.jamestmartin.wasteland.towny.TownyDependency;
 import me.jamestmartin.wasteland.towny.TownyDisabled;
 import me.jamestmartin.wasteland.towny.TownyPrefix;
@@ -27,10 +29,15 @@ public class Wasteland extends JavaPlugin {
 	private WastelandConfig config;
 	private RankListener rankListener;
 	private TownyPrefix townyPrefix;
+	private WastelandSpawner spawner;
 	
 	public static Wasteland getInstance() {
 		return instance;
 	}
+
+    public Database getDatabase() {
+        return database;
+    }
 	
 	public WastelandConfig getSettings() {
 		return config;
@@ -40,8 +47,8 @@ public class Wasteland extends JavaPlugin {
 		return townyPrefix;
 	}
 	
-	public Database getDatabase() {
-		return database;
+	public WastelandSpawner getSpawner() {
+	    return spawner;
 	}
 	
 	public void updatePlayerRank(Player player) throws SQLException {
@@ -83,6 +90,9 @@ public class Wasteland extends JavaPlugin {
         this.getCommand("ranks").setExecutor(new CommandRanks());
 		this.getCommand("setkills").setExecutor(new CommandSetKills());
 		this.getCommand("official").setExecutor(new CommandOfficial());
+
+		// debug commands
+		this.getCommand("debugspawnweights").setExecutor(new CommandDebugSpawnWeights());
 	}
 	
 	private void registerListeners() {
@@ -100,8 +110,9 @@ public class Wasteland extends JavaPlugin {
 		initializeDatabase();
 		registerCommands();
 		registerListeners();
+		this.spawner = new WastelandSpawner(config.spawns());
 	}
-	
+
 	@Override
 	public void onDisable() {
 		if (rankListener != null)

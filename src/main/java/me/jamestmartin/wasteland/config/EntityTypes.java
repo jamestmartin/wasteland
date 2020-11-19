@@ -1,6 +1,5 @@
 package me.jamestmartin.wasteland.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
