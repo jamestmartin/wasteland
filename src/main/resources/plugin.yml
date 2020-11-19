@@ -2,14 +2,14 @@ name: Wasteland
 author: HuskFodder
 main: me.jamestmartin.wasteland.Wasteland
 version: 0.1.0
-api-version: 1.15
+api-version: 1.16
 
 softdepend: [Towny]
 
 commands:
    rank:
       description: View your rank and how many monsters you have killed.
-      usage: "Usage: /<command> [player]"
+      usage: "Usage: /<command> [<player>]"
       permission: wasteland.view-rank
       permission-message: You do not have permission to view your rank.
    rankeligiblemobs:
@@ -22,14 +22,14 @@ commands:
       usage: "Usage: /<command>"
    setkills:
       description: Set another player's number of kills for debugging.
-      usage: "Usage: /<command> [player] kills"
+      usage: "Usage: /<command> [<player>] <kills>"
       permission: wasteland.kills.set
       permission-message: You do not have permission to set anyone's kills.
    official:
       description: Make an official announcement using your staff rank.
-      usage: "Usage: /<command> [message]"
+      usage: "Usage: /<command> <message>"
       permission: wasteland.official
-      permission-message: You are not a staff member.
+      permission-message: You are not a staff member with an officer rank.
 
 permissions:
    wasteland.chat.officer:
@@ -65,4 +65,3 @@ permissions:
    wasteland.view-eligible-mobs:
       description: Allows you to see the specific list of what mobs count towards promotion with /rankeligiblemobs.
       default: true
-      

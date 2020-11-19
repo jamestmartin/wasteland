@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -73,7 +74,7 @@ public class CommandRank implements CommandExecutor {
 			Optional<EnlistedRank> rank = EnlistedRank.getRankFromKills(kills);
 			Optional<EnlistedRank> nextRank = EnlistedRank.getNextRank(subject);
 			if (rank.isPresent()) {
-				sender.sendMessage(playerName + is + "rank " + rank.get().formatFull() + ".");
+				sender.sendMessage(playerName + is + "rank " + rank.get().formatFull() + ChatColor.RESET + ".");
 			}
 			if (seeKills) {
 				String hasKilled = playerName + has + "killed " + kills + " " + eligibleMobsName;
@@ -81,13 +82,13 @@ public class CommandRank implements CommandExecutor {
 				if (nextRank.isPresent()) {
 					int moreZombies = nextRank.get().getKills().get() - kills;
 					andHasToGo = " and" + need + "to kill " + moreZombies
-							+ " more to reach " + nextRank.get().formatFull() + ".";
+							+ " more to reach " + nextRank.get().formatFull() + ChatColor.RESET + ".";
 				} else {
 					andHasToGo = " and" + has + "reached maximum rank.";
 				}
 				sender.sendMessage(hasKilled + andHasToGo);
 			} else if (nextRank.isPresent()) {
-				sender.sendMessage(playerNameS + " next rank will be " + nextRank.get().formatExtended() + ".");
+				sender.sendMessage(playerNameS + " next rank will be " + nextRank.get().formatExtended() + ChatColor.RESET + ".");
 			} else {
 				sender.sendMessage(playerName + has + "reached maximum rank.");
 			}

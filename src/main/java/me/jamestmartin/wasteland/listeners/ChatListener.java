@@ -29,14 +29,14 @@ public class ChatListener implements Listener {
 		
 		String rankPrefix;
 		if (rank.isPresent()) {
-			rankPrefix = rank.get().formatAbbreviated();
+			rankPrefix = rank.get().formatAbbreviated() + ChatColor.RESET;
 			if (Wasteland.getInstance().getSettings().bracketChatRank())
-				rankPrefix = ChatColor.RESET + "[" + rankPrefix + ChatColor.RESET + "]";
+				rankPrefix = ChatColor.RESET + "[" + rankPrefix + "]";
 			rankPrefix = rankPrefix + " ";
 		} else {
 			rankPrefix = "";
 		}
 		
-		event.setFormat(townyPrefix + rankPrefix + "%s" + ChatColor.WHITE + ": %s");
+		event.setFormat(townyPrefix + rankPrefix + "%s" + ChatColor.RESET + ": %s");
 	}
 }
