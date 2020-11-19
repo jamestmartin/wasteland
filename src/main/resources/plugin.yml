@@ -32,6 +32,11 @@ commands:
       permission-message: You are not a staff member with an officer rank.
 
    # debug commands
+   debugspawn:
+      description: Spawn a random monster.
+      usage: "Usage: /<command> [<attempts>]"
+      permission: wasteland.debug.spawns.spawn
+      permission-message: You do not have permission to spawn debug monsters.
    debugspawnweights:
       description: View the monster spawn weights at the block you are looking at.
       usage: "Usage: /<command>"
@@ -82,7 +87,11 @@ permissions:
       description: Commands for debugging the spawning system.
       default: false
       children:
+         wasteland.debug.spawns.spawn: true
          wasteland.debug.spawns.weights: true
+   wasteland.debug.spawns.spawn:
+      description: Allows you to randomly spawn monsters using a command.
+      default: false
    wasteland.debug.spawns.weights:
       description: Allows you to see the spawn weights by mob type at a block.
       default: false

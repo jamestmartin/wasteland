@@ -1,12 +1,24 @@
 package me.jamestmartin.wasteland.spawns;
 
+import org.bukkit.entity.EntityType;
+
 public enum MonsterType {
     /** A creeper or charged creeper, as appropriate. */
-    CREEPER,
+    CREEPER(EntityType.CREEPER),
     /** A skeleton, wither skeleton, stray, etc., as appropriate. */
-    SKELETON,
+    SKELETON(EntityType.SKELETON),
     /** A spider, cave spider, or spider jockey, as appropriate. */
-    SPIDER,
+    SPIDER(EntityType.SPIDER),
     /** A zombie, husk, pig zombie, etc., as appropriate. */
-    ZOMBIE,
+    ZOMBIE(EntityType.ZOMBIE);
+    
+    private final EntityType defaultVariant;
+    
+    private MonsterType(final EntityType defaultVariant) {
+        this.defaultVariant = defaultVariant;
+    }
+    
+    public EntityType getDefaultVariant() {
+        return defaultVariant;
+    }
 }

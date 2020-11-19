@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
+import me.jamestmartin.wasteland.commands.CommandDebugSpawn;
 import me.jamestmartin.wasteland.commands.CommandDebugSpawnWeights;
 import me.jamestmartin.wasteland.commands.CommandOfficial;
 import me.jamestmartin.wasteland.commands.CommandRank;
@@ -92,6 +93,7 @@ public class Wasteland extends JavaPlugin {
 		this.getCommand("official").setExecutor(new CommandOfficial());
 
 		// debug commands
+		this.getCommand("debugspawn").setExecutor(new CommandDebugSpawn());
 		this.getCommand("debugspawnweights").setExecutor(new CommandDebugSpawnWeights());
 	}
 	

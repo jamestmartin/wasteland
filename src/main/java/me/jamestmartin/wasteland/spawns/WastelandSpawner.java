@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -15,6 +18,7 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
 import me.jamestmartin.wasteland.config.MonsterSpawnConfig;
+import me.jamestmartin.wasteland.util.Pair;
 import me.jamestmartin.wasteland.world.MoonPhase;
 
 public class WastelandSpawner {
@@ -176,5 +180,59 @@ public class WastelandSpawner {
     
     public HashMap<MonsterType, Float> calculateSpawnProbabilities(Block block) {
         return calculateSpawnProbabilities(block.getLocation());
+    }
+    
+    public static Location spawnBiasedRandomLocation(Random rand, Location center, int minRadius, int maxRadius) {
+        // An angle on the xy plane, from 0 to 1.
+        double xzAngle  = 2 * Math.PI * rand.nextDouble();
+        // An angle on the plane specified by the xz angle and the y axis, from -0.5 to 0.5.
+        // We have a bias towards y-levels closer to the player;
+        // the angle 0 is the xy line, so the bell curve is centered on the player's y level.
+        double xzyAngle = Math.PI * rand.nextGaussian() / 3;
+        
+        // Prefer to spawn closer to the player, using half a bell curve.
+        double magnitude = (maxRadius - minRadius) * Math.abs(rand.nextGaussian() / 3) + minRadius;
+        
+        double offX = magnitude * Math.cos(xzAngle) * Math.cos(xzyAngle);
+        double offZ = magnitude * Math.sin(xzAngle) * Math.cos(xzyAngle);
+        double offY = magnitude * Math.sin(xzyAngle);
+        
+        return new Location(center.getWorld(), center.getX() + offX, center.getY() + offY, center.getZ() + offZ);
+    }
+    
+    public static Optional<Pair<MonsterType, Double>> chooseWeightedRandomMonster(Random rand, Map<MonsterType, Float> weights) {
+        double overallSpawnProbability = weights.values().stream().reduce(0.0f, (x, y) -> x + y);
+        if (rand.nextDouble() >= overallSpawnProbability) {
+            return Optional.empty();
+        }
+        
+        double whichMonster = rand.nextDouble() * overallSpawnProbability;
+        for (Entry<MonsterType, Float> monster : weights.entrySet()) {
+            double successMargin = monster.getValue() - whichMonster;
+            if (successMargin > 0) {
+                return Optional.of(new Pair<>(monster.getKey(), successMargin));
+            }
+            whichMonster -= monster.getValue();
+        }
+        
+        // This should only be able to happen due to rounding error.
+        return Optional.empty();
+    }
+    
+    public Optional<Pair<MonsterType, Double>> pickRandomMonster(Random rand, Block block) {
+        Map<MonsterType, Float> weights = calculateSpawnProbabilities(block);
+        return chooseWeightedRandomMonster(rand, weights);
+    }
+    
+    public Optional<LivingEntity> trySpawn(Random rand, Location center) {
+        Location location = spawnBiasedRandomLocation(rand, center, 20, 54);
+        return pickRandomMonster(rand, location.getBlock()).map(mm -> {
+            MonsterType type = mm.x;
+            return (LivingEntity) location.getWorld().spawnEntity(location, type.getDefaultVariant());
+        });
+    }
+    
+    public Optional<LivingEntity> trySpawn(Location center) {
+        return trySpawn(new Random(), center);
     }
 }
