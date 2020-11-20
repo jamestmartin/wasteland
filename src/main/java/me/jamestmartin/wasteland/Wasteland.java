@@ -18,7 +18,7 @@ import me.jamestmartin.wasteland.listeners.RankListener;
 import me.jamestmartin.wasteland.spawns.WastelandSpawner;
 import me.jamestmartin.wasteland.towny.TownyDependency;
 import me.jamestmartin.wasteland.towny.TownyDisabled;
-import me.jamestmartin.wasteland.towny.TownyPrefix;
+import me.jamestmartin.wasteland.towny.TownAbbreviationProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +29,7 @@ public class Wasteland extends JavaPlugin {
 	private Database database;
 	private WastelandConfig config;
 	private RankListener rankListener;
-	private TownyPrefix townyPrefix;
+	private TownAbbreviationProvider townyAbbreviationProvider;
 	private WastelandSpawner spawner;
 	
 	public static Wasteland getInstance() {
@@ -44,8 +44,8 @@ public class Wasteland extends JavaPlugin {
 		return config;
 	}
 	
-	public TownyPrefix getTownyPrefix() {
-		return townyPrefix;
+	public TownAbbreviationProvider getTownyAbbreviationProvider() {
+		return townyAbbreviationProvider;
 	}
 	
 	public WastelandSpawner getSpawner() {
@@ -63,9 +63,9 @@ public class Wasteland extends JavaPlugin {
 	
 	private void initializeTowny() {
 		if (Wasteland.getInstance().getServer().getPluginManager().isPluginEnabled("Towny")) {
-			this.townyPrefix = new TownyDependency(config.prefixTownTagColor());
+			this.townyAbbreviationProvider = new TownyDependency();
 		} else {
-			this.townyPrefix = new TownyDisabled();
+			this.townyAbbreviationProvider = new TownyDisabled();
 		}
 	}
 	
@@ -90,7 +90,7 @@ public class Wasteland extends JavaPlugin {
 		this.getCommand("rankeligiblemobs").setExecutor(new CommandRankEligibleMobs(config.eligibleMobsName(), config.eligibleMobs()));
         this.getCommand("ranks").setExecutor(new CommandRanks());
 		this.getCommand("setkills").setExecutor(new CommandSetKills());
-		this.getCommand("official").setExecutor(new CommandOfficial());
+		this.getCommand("official").setExecutor(new CommandOfficial(config.chat()));
 
 		// debug commands
 		this.getCommand("debugspawn").setExecutor(new CommandDebugSpawn());
@@ -99,9 +99,8 @@ public class Wasteland extends JavaPlugin {
 	
 	private void registerListeners() {
 		PluginManager manager = this.getServer().getPluginManager();
-		rankListener = new RankListener(config.eligibleMobs());
-		manager.registerEvents(rankListener, this);
-		manager.registerEvents(new ChatListener(), this);
+		manager.registerEvents(new RankListener(config.eligibleMobs()), this);
+		manager.registerEvents(new ChatListener(config.chat()), this);
 	}
 	
 	@Override

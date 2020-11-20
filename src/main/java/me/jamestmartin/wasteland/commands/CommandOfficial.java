@@ -1,17 +1,20 @@
 package me.jamestmartin.wasteland.commands;
 
-import java.util.Optional;
-
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.config.ChatConfig;
 import me.jamestmartin.wasteland.ranks.Rank;
 
 public class CommandOfficial implements CommandExecutor {
+    private final ChatConfig config;
+    
+    public CommandOfficial(ChatConfig config) {
+        this.config = config;
+    }
+    
 	@Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length < 1) {
@@ -19,29 +22,27 @@ public class CommandOfficial implements CommandExecutor {
 			return false;
 		}
 		
-		String senderFormat;
+		final String message = String.join(" ", args);
+		
+		final String format;
 		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			Optional<Rank> rank = Rank.getOfficerRank(player);
-			if (!rank.isPresent()) {
+			final Player player = (Player) sender;
+			if (!Rank.getOfficerRank(player).isPresent()) {
 				sender.sendMessage("You are not a staff member.");
 				return true;
 			}
-			String rankFormat = rank.get().formatAbbreviated() + ChatColor.RESET;
-			if (Wasteland.getInstance().getSettings().bracketChatRank()) {
-				rankFormat = ChatColor.RESET + "[" + rankFormat + "]";
-			}
-			senderFormat = rankFormat + " " + player.getDisplayName();
+			
+			format = config.getOfficialFormat(player).replaceFirst("%s", player.getDisplayName());
 		} else {
-			Optional<Rank> consoleRank = Wasteland.getInstance().getSettings().consoleRank();
-			if (!consoleRank.isPresent()) {
+			if (!Rank.getConsoleRank().isPresent()) {
 				sender.sendMessage("No console rank is configured to send messages with!");
 				return true;
 			}
-			senderFormat = consoleRank.get().formatFull();
+			
+			format = config.getConsoleFormat();
 		}
 		
-		sender.getServer().broadcastMessage(senderFormat + ChatColor.RESET + ": " + String.join(" ", args));
+		sender.getServer().broadcastMessage(format.replaceFirst("%s", message));
 		return true;
 	}
 }

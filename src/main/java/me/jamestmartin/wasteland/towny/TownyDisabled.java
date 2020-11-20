@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.bukkit.entity.Player;
 
-public class TownyDisabled implements TownyPrefix {
+public class TownyDisabled implements TownAbbreviationProvider {
 	@Override
-	public Optional<String> getPrefix(Player player) {
+	public Optional<String> getTownAbbreviation(Player player) {
 		return Optional.empty();
 	}
 }

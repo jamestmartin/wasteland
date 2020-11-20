@@ -2,35 +2,20 @@ package me.jamestmartin.wasteland.towny;
 
 import java.util.Optional;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 
-public class TownyDependency implements TownyPrefix {
-	private final String townTagColor;
-	
-	public TownyDependency(Optional<ChatColor> townTagColor) {
-		this.townTagColor = townTagColor.map(ChatColor::toString).orElse("");
-	}
-	
-	public TownyDependency() {
-		this(Optional.empty());
-	}
-	
-	public TownyDependency(ChatColor townTagColor) {
-		this(Optional.of(townTagColor));
-	}
-	
+public class TownyDependency implements TownAbbreviationProvider {
 	@Override
-	public Optional<String> getPrefix(Player player) {
+	public Optional<String> getTownAbbreviation(Player player) {
 		try {
 			Resident resident = TownyAPI.getInstance().getDataSource().getResident(player.getName());
 			String tag = resident.getTown().getTag();
 			if (tag != null && !tag.equals("")) {
-				return Optional.of(ChatColor.RESET + "[" + townTagColor + tag + ChatColor.RESET + "]");
+				return Optional.of(tag);
 			}
 		} catch (NotRegisteredException e) {
 		}

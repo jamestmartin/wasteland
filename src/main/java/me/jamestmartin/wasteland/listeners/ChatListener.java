@@ -1,42 +1,26 @@
 package me.jamestmartin.wasteland.listeners;
 
-import java.util.Optional;
-
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import me.jamestmartin.wasteland.Wasteland;
-import me.jamestmartin.wasteland.ranks.EnlistedRank;
-import me.jamestmartin.wasteland.ranks.Rank;
+import me.jamestmartin.wasteland.config.ChatConfig;
 
 public class ChatListener implements Listener {
+    private final ChatConfig config;
+    
+    public ChatListener(final ChatConfig config) {
+        this.config = config;
+    }
+    
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		Player player = event.getPlayer();
-		
-		Optional<String> townyPrefixQ = Wasteland.getInstance().getTownyPrefix().getPrefix(player);
-		String townyPrefix = townyPrefixQ.map(x -> x + " ").orElse("");
-		Optional<Rank> rank;
-		if (Wasteland.getInstance().getSettings().preferOfficerRank()
-				|| player.hasPermission("wasteland.chat.officer")) {
-			rank = Rank.getHighestRank(player);
+	public void onPlayerChat(final AsyncPlayerChatEvent event) {
+		final Player player = event.getPlayer();
+		if (player.hasPermission("wasteland.chat.officer")) {
+		    event.setFormat(config.getOfficerChatFormat(player));
 		} else {
-			rank = EnlistedRank.getEnlistedRank(player).map(x -> (Rank) x);
+		    event.setFormat(config.getPlayerChatFormat(player));
 		}
-		
-		String rankPrefix;
-		if (rank.isPresent()) {
-			rankPrefix = rank.get().formatAbbreviated() + ChatColor.RESET;
-			if (Wasteland.getInstance().getSettings().bracketChatRank())
-				rankPrefix = ChatColor.RESET + "[" + rankPrefix + "]";
-			rankPrefix = rankPrefix + " ";
-		} else {
-			rankPrefix = "";
-		}
-		
-		event.setFormat(townyPrefix + rankPrefix + "%s" + ChatColor.RESET + ": %s");
 	}
 }

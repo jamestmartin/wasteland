@@ -35,9 +35,6 @@ public class CommandRanks implements CommandExecutor {
 			sender.sendMessage("* " + makeElement(rank));
 		}
 		
-		if (config.consoleRank().isPresent()) {
-			sender.sendMessage("* " + makeElement(config.consoleRank().get()));
-		}
 		return true;
 	}
 }

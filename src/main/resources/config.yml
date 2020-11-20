@@ -1,34 +1,42 @@
 databaseFile: wasteland.sqlite3
 
-# Colors and decoration names must be written in ALL_CAPS_USING_UNDERLINES.
-# For a list of valid formatting codes, see https://minecraft.gamepedia.com/Formatting_codes#Color_codes
-
-# If `true`, chat will be prefixed with the player's Towny town tag if the town's tag is set.
-# These settings have no effect if Towny is not enabled.
-prefixTownTag: true
-prefixTownTagColor: BLUE
-
-# If `true`, the officer rank will also be used in regular chat, not just `/official` messages.
-# Even if false, this can still be set per-player using `wasteland.chat.officer`.
-preferOfficerRank: false
-
-# If `true`, chat shows as `[Pvt] HuskFodder` instead of `Pvt HuskFodder`.
-bracketChatRank: true
+chat:
+  # `{enlisted}`, `{officer}`, `{console}`, and `{rank}` indicate the rank prefix
+  # using the highest enlisted, officer, console, and overall ranks respectively.
+  #
+  # `{towny}` indicates the town prefix if the player is in a town and the town tag is set.
+  #
+  # The first `%s` is the player's name and the second is the message itself.
+  formats:
+    # The format used for chat.
+    chat: "{towny}{enlisted}%s: %s"
+    # The format used for chat player with the `wasteland.chat.officer` permission.
+    officer: "{towny}{officer}%s: %s"
+    # The format used for `/official` when used by a player.
+    official: "{officer}%s: %s"
+    # The format used for `/official` when used by the server.
+    console: "{console_full}§r: %s"
+  prefixes:
+    # `{abbr}` is the rank's abbreviation, with formatting
+    rank: "§r[{abbr}§r] "
+    # `{tag}` is the town's tag
+    towny: "§r[§9{tag}§r] "
 
 #
-# enlistedRanksDefaultDecoration: <ColorCode>   # optional
-# enlistedRankDefaultDescription: <description> # optional, may reference the rank's number of {kills}.
-# enlistedRanks:
-#    <rankID>: # the rank permission will be `wasteland.rank.<rankID>`.
+# enlisted:
+#   decoration: <ColorCode>    # optional
+#   description: <description> # optional, may reference the rank's number of `{kills}`.
+#   ranks:
+#     <rankID>: # the rank permission will be `wasteland.rank.<rankID>`.
 #       name: <full rank name>            # optional, defaults to the rank ID
 #       abbreviation: <rank abbreviation> # optional, defaults to the name
-#       description: <rank description>   # optional, defaults to `enlistedRankDefaultDescription`.
-#       succeeds: <rankID>                # optional, the prior rank
+#       description: <rank description>   # optional, defaults to `enlisted.description`.
+#       succeeds: <rankID>                # optional, the prior rank (defaults to nothing)
 #       preferred: <bool>                 # optional, used to disambiguate multiple ranks
 #                                         #           which both succeed the same rank.
 #                                         #           Defaults to `true`.
 #       color: <ColorCode>                # optional
-#       decoration: <ColorCode>           # optional, defaults to `enlistedRanksDefaultDecoration`
+#       decoration: <ColorCode>           # optional, defaults to `enlisted.decoration`
 #       kills: <0+>                       # optional, but the rank won't be used without it
 #    ...
 #
@@ -41,10 +49,33 @@ bracketChatRank: true
 
 # You may wish to remove the unused alternative ranks.
 
-enlistedRankDefaultDescription: "{kills} kills."
-enlistedRanks:
-   # A default rank which is not part of the marines.
-   fodder:
+enlisted:
+  description: "{kills} kills."
+  promotions:
+    # The eligible monsters are the entity types which, if killed, will count towards your next promotion.
+    # Each value must be a valid Bukkit EntityType (e.g. `WITHER_SKELETON` or `ENDERMAN`),
+    # or one of these built-in entitiy collections:
+    # * `bosses`: The ender dragon or wither.
+    # * `hostiles`: Mobs which will attack you on sight, including the bosses.
+    # * `neutrals`: Mobs which will only attack you under certain conditions,
+    #               e.g. wolves attack you if attacked, enderman attack you if looked at, spiders attack in the dark.
+    # * `monsters`: Mobs which are eligiable for the "Monster Hunter" achievement,
+    #               which is to say all of the hostile mobs, endermen, spiders, and zombified piglins.
+    # * `zombies`: All zombies, including zombified piglins.
+    # * `spiders`: All spiders: regular spiders and cave spiders.
+    #
+    # The wiki lists which mobs are bosses, hostile, or neutral: https://minecraft.gamepedia.com/Mob#List_of_mobs
+    # Monsters are defined as the mobs which are eligible for the Monster Hunter achievement
+    # (all hostile mobs plus endermen, spiders, and zombified piglins).
+    #
+    # This defaults to monsters.
+    eligible:
+      # You must give a name for messages to the player, for e.g. "You must kill X more ??? before your next promotion."
+      name: monsters
+      entities: [bosses, monsters]
+  ranks:
+    # A default rank which is not part of the marines.
+    fodder:
       # `name` is optional and defaults to the `title`.
       name: Zombie Fodder
       # `abbreviation` is optional and defaults to the rank ID.
@@ -52,50 +83,50 @@ enlistedRanks:
       description: This person probably won't survive long.
       color: GRAY
       kills: 0
-   pvt:
+    pvt:
       name: Private
       abbreviation: Pvt
       succeeds: fodder
       color: WHITE
       kills: 100
-   pfc:
+    pfc:
       name: Private First Class
       abbreviation: PFC
       succeeds: pvt
       color: BLUE
       kills: 250
-   lcpl:
+    lcpl:
       name: Lieutenant Corporal
       abbreviation: LCpl
       succeeds: pfc
       color: GREEN
       kills: 500
-   cpl:
+    cpl:
       name: Corporal
       abbreviation: Cpl
       succeeds: lcpl
       color: RED
       kills: 1000
-   sgt:
+    sgt:
       name: Sergeant
       abbreviation: Sgt
       succeeds: cpl
       color: LIGHT_PURPLE
       kills: 2500
-   ssgt:
+    ssgt:
       name: Staff Sergeant
       abbreviation: SSgt
       succeeds: sgt
       color: YELLOW
       kills: 5000
-   gysgt:
+    gysgt:
       name: Gunnery Sergeant
       abbreviation: GySgt
       succeeds: ssgt
       color: AQUA
       kills: 10000
-   # Alternative DARK_RED rank, currently unused.
-   fstsgt:
+    # Alternative DARK_RED rank, currently unused.
+    fstsgt:
       name: First Sergeant
       abbreviation: 1stSgt
       description: Unused alternative rank for {kills} kills.
@@ -103,21 +134,21 @@ enlistedRanks:
       preferred: false
       color: DARK_RED
       kills: 25000
-   msgt:
+    msgt:
       name: Master Sergeant
       abbreviation: MSgt
       succeeds: gysgt
       color: DARK_RED
       kills: 25000
-   # Alternative DARK_PURPLE rank, currently unused.
-   sgtmaj:
+    # Alternative DARK_PURPLE rank, currently unused.
+    sgtmaj:
       name: Sergeant Major
       abbreviation: SgtMaj
       description: Unused alternative rank for {kills} kills.
       succeeds: fstsgt
       color: DARK_PURPLE
       kills: 50000
-   mgysgt:
+    mgysgt:
       name: Master Gunnery Sergeant
       abbreviation: MGySgt
       description: A survivor of the wasteland, with over {kills} kills.
@@ -125,8 +156,8 @@ enlistedRanks:
       color: DARK_PURPLE
       kills: 50000
 
-# Officer ranks cannot be obtained by killing zombies.
-# They must manually be set using permissions.
+# Officer ranks cannot be obtained by killing zombies;
+# they must manually be set using permissions.
 # Setting permissions for any rank also gives permissions for all previous ranks.
 # You may also optionally specify a rank `description`,
 # which will be listed to describe what a staff member of that rank does,
@@ -134,79 +165,129 @@ enlistedRanks:
 
 # It may be best to remove ranks that you are not using to avoid cluttering the ranks list.
 
-officerRankDefaultDecoration: BOLD
-officerRanks:
-   sndlt:
+officer:
+  decoration: BOLD
+  # The rank used by the console when it makes an official message.
+  # Defaults to whatever the last rank listed is.
+  console: gas
+  ranks:
+    sndlt:
       name: Second Lieutenant
       abbreviation: 2ndLt
       color: WHITE
-   fstlt:
+    fstlt:
       name: First Lieutenant
       abbreviation: 1stLt
       succeeds: sndlt
       color: BLUE
-   capt:
+    capt:
       name: Captain
       abbreviation: Capt
       succeeds: fstlt
       color: GREEN
-   maj:
+    maj:
       name: Major
       abbreviation: Maj
       succeeds: capt
       color: RED
-   ltcol:
+    ltcol:
       name: Lieutenant Colonel
       abbreviation: LtCol
       succeeds: maj
       color: LIGHT_PURPLE
-   col:
+    col:
       name: Colonel
       abbreviation: Col
       succeeds: ltcol
       color: YELLOW
-   bgen:
+    bgen:
       name: Brigadier General
       abbreviation: BGen
       succeeds: col
       color: AQUA
-   majgen:
+    majgen:
       name: Major General
       abbreviation: MajGen
       succeeds: bgen
       color: DARK_RED
-   ltgen:
+    ltgen:
       name: Lieutenant General
       abbreviation: LtGen
       succeeds: majgen
       color: DARK_PURPLE
-   gen:
+    gen:
       name: General
       abbreviation: Gen
       succeeds: ltgen
       color: GOLD
+    gas:
+      name: General of the Armies
+      abbreviation: GAS
+      description: The server console.
+      color: GOLD
 
-# The rank used by the console when it makes an official message.
-
-consoleRank:
-   name: General of the Armies # mandatory
-   abbreviation: GAS           # Currently unused
-   description: The server console.
-   color: GOLD
-   decoration: BOLD
-
-# The entity types which, if killed, will count towards your enlisted rank.
-# Each value must be a valid Bukkit EntityType (e.g. `WITHER_SKELETON` or `ENDERMAN`),
-# or one of my built-in entity collections (`bosses`, hostiles`, `monsters`, `neutrals`, `zombies`, `spiders`).
-# Beware that `hostiles` does not include endermen, spiders, or zombified piglins,
-# although they are included in `monsters`.
 #
-# The wiki lists which mobs are bosses, hostile, or neutral: https://minecraft.gamepedia.com/Mob#List_of_mobs
-# Monsters are defined as the mobs which are eligible for the Monster Hunter achievement
-# (all hostile mobs plus endermen, spiders, and zombified piglins).
-
-eligibleMobs: [monsters]
-eligibleMobsName: monsters
+# spawns:
+#   # Valid monster types are are CREEPER, SKELETON, SPIDER, and ZOMBIE.
+#   # The numbers generated by this section's configuration are multiplied together
+#   # to determine the probability of a monster spawning at a specific location,
+#   # and the amount by which a monster succeeds its probability check
+#   # count towards its spawn quality for the purpose of applying buffs.
+#   <MonsterType>: 
+#     # The light levels in which a monster can spawn.
+#     # The probability of a monster spawning is determined by how much light is on the desired spawn block,
+#     # reaching a probability of 0.0 when the light reaches the specified maximum.
+#     light:
+#       maximum: <integer> # defaults to 9
+#       
+#       # A block's light level is the maximum of the block light and the sunlight and moonlight added together.
+#       # The weights affect how much each kind of light contributes toward the overall light level:
+#       # Before calculating the overall light level, each light source is multiplied by its respective weight.
+#       # The sun and block light level weights default to 1; the moon light level weight defaults to 0.
+#       #
+#       # A negative weight means that light from this source will *increase* the probability of a monster spawning
+#       # in a given light, including in brighter areas (so if you had `moon: -1.0`, on a full moon,
+#       # monsters would be able to spawn in block light levels up to `9 + 6`, whereas with `1.0` it would be `9 - 6`).
+#       #
+#       # Unlike in Vanilla, the sunlight level doesn't go directly between 15 and 0 at dawn and dusk.
+#       # There is a *gradual transition* between sunlight and moonlight for the duration of dawn and dusk,
+#       # and in vanilla, moonlight doesn't exist at all so that's a new thing too.
+#       #
+#       # Finally, sky light levels aren't calculated in quite the same way as block light levels.
+#       # Rather than diminishing one light level per block, the light diminishes by `1/15th` of its maximum per block.
+#       # This means that moonlight shines dramatically deeper into caves and buildings, albeit only at low intensity.
+#       #
+#       # Moonlight by phase of moon:
+#       # * FULL:            6
+#       # * WANING_GIBBOUS:  5
+#       # * THIRD_QUARTER:   3
+#       # * NEW:             0
+#       # * WAXING_CRESCENT: 2
+#       # * FIRST_QUARTER:   3
+#       # * WAXING_GIBBOUS:  4
+#       #
+#       # There isn't any particular reason for the moon phase light to be asymmetrical, and the numbers are arbitrary;
+#       # I made them asymmetrical to make things interesting, and the numbers were chosen just because they felt right.
+#       # Perhaps I will make the moonlight by phase configurable in the future.
+#       #
+#       weights:
+#         sun: <float>
+#         moon: <float>
+#         block: <float>
+#
+#     # The y-levels within which a monster can spawn.
+#     # Like with light, the probability of a monster spawning is diminished the farther it is from the center of the region.
+#     height:
+#       minimum: <integer> # Defaults to 0
+#       maximum: <integer> # Defaults to the largest possible integer. `-1` will *not* work here!
+#
+#     # The probability of spawning will be multiplied by the modifier specified here depending on what moon phase it is.
+#     # The moon phase multiplier *only* has effect between dusk and dawn, although it *does* have effect underground.
+#     phases:
+#       <MOON_PHASE>: <float>
+#       ...
+#   ...
+#
 
 spawns:
    CREEPER:

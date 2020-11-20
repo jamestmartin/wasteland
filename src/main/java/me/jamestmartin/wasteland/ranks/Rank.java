@@ -115,6 +115,24 @@ public class Rank {
 		return EnlistedRank.getEnlistedRank(player).map(x -> (Rank) x);
 	}
 	
+	public static Optional<Rank> getConsoleRank() {
+	    return Wasteland.getInstance().getSettings().consoleRank();
+	}
+	
+	public static Optional<Rank> getRank(RankType type, Player player) {
+	    switch (type) {
+            case CONSOLE:
+                return getConsoleRank();
+            case ENLISTED:
+                return EnlistedRank.getEnlistedRank(player).map(x -> x);
+            case HIGHEST:
+                return getHighestRank(player);
+            case OFFICER:
+                return getOfficerRank(player);
+	    }
+	    throw new IllegalStateException("Unknown rank type.");
+	}
+	
 	public static class RankComparator implements Comparator<Rank> {
 		private final Collection<Rank> ranks;
 		

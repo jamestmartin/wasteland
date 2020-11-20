@@ -20,10 +20,8 @@ import me.jamestmartin.wasteland.spawns.MonsterType;
 
 public class WastelandConfig {
 	private final String databaseFile;
-	private final boolean prefixTownTag;
-	private final Optional<ChatColor> prefixTownTagColor;
 	
-	private final boolean preferOfficerRank, bracketChatRank, nameUsesRankColor;
+	private final ChatConfig chat;
 	
 	private final Collection<EnlistedRank> enlistedRanks;
 	private final Collection<Rank> officerRanks;
@@ -41,60 +39,67 @@ public class WastelandConfig {
 	
 	public WastelandConfig(ConfigurationSection c) {
 		this.databaseFile = c.getString("databaseFile", "wasteland.sqlite3");
-		this.prefixTownTag = c.getBoolean("prefixTownTag", true);
-		this.prefixTownTagColor = readColor(c, "prefixTownTagColor");
-		this.preferOfficerRank = c.getBoolean("preferOfficerRank", false);
-		this.bracketChatRank = c.getBoolean("bracketChatRank", true);
-		this.nameUsesRankColor = c.getBoolean("nameUsesRankColor", false);
 		
-		ConfigurationSection ers = c.getConfigurationSection("enlistedRanks");
+		this.chat = new ChatConfig(c.getConfigurationSection("chat"));
+		
+		ConfigurationSection enlistedSection = c.getConfigurationSection("enlisted");
 		ArrayList<EnlistedRank> enlistedRanks = new ArrayList<>();
 		this.enlistedRanks = enlistedRanks;
-		if (ers != null) {
-			Optional<ChatColor> defaultDecoration = readColor(c, "enlistedRankDefaultDecoration");
+        this.eligibleMobs = new HashSet<>();
+		if (enlistedSection != null) {
+			Optional<ChatColor> defaultDecoration = readColor(enlistedSection, "decoration");
 			Optional<String> defaultDescription =
-					Optional.ofNullable(c.getString("enlistedRankDefaultDescription"));
+					Optional.ofNullable(enlistedSection.getString("description"));
 			
-			Set<String> rankIDs = ers.getKeys(false);
+			ConfigurationSection enlistedRanksSection = enlistedSection.getConfigurationSection("ranks");
+			Set<String> rankIDs = enlistedRanksSection.getKeys(false);
 			enlistedRanks.ensureCapacity(rankIDs.size());
 			for (String id : rankIDs) {
 				EnlistedRank result = new EnlistedRank(defaultDescription, defaultDecoration,
-						ers.getConfigurationSection(id));
+				        enlistedRanksSection.getConfigurationSection(id));
 				enlistedRanks.add(result);
 			}
 			enlistedRanks.sort(new EnlistedRank.EnlistedRankComparator(enlistedRanks));
+			
+
+	        ConfigurationSection promotionSection = enlistedSection.getConfigurationSection("promotions");
+	        ConfigurationSection eligibleSection = promotionSection.getConfigurationSection("eligible");
+	        
+	        List<String> eligibleMobTypes = eligibleSection.getStringList("entities");
+	        for (String mobType : eligibleMobTypes) {
+	            this.eligibleMobs.addAll(Arrays.asList(EntityTypes.lookupEntityType(mobType)));
+	        }
+
+	        this.eligibleMobsName = eligibleSection.getString("name");
+		} else {
+		    this.eligibleMobsName = "nothing";
 		}
 		
-		ConfigurationSection ors = c.getConfigurationSection("officerRanks");
+		ConfigurationSection officerSection = c.getConfigurationSection("officer");
 		ArrayList<Rank> officerRanks = new ArrayList<>();
 		this.officerRanks = officerRanks;
-		if (ors != null) {
-			Optional<ChatColor> defaultDecoration = readColor(c, "officerRankDefaultDecoration");
+		if (officerSection != null) {
+			Optional<ChatColor> defaultDecoration = readColor(officerSection, "decoration");
 			
-			Set<String> rankIDs = ors.getKeys(false);
+			ConfigurationSection officerRanksSection = officerSection.getConfigurationSection("ranks");
+			Set<String> rankIDs = officerRanksSection.getKeys(false);
 			officerRanks.ensureCapacity(rankIDs.size());
 			for (String id : rankIDs) {
-				ConfigurationSection rank = ors.getConfigurationSection(id);
+				ConfigurationSection rank = officerRanksSection.getConfigurationSection(id);
 				Rank result = new Rank(Optional.empty(), defaultDecoration, rank);
 				officerRanks.add(result);
 			}
 			officerRanks.sort(new Rank.RankComparator(officerRanks));
-		}
-		
-		ConfigurationSection crs = c.getConfigurationSection("consoleRank");
-		if (crs == null) {
-			this.consoleRank = Optional.empty();
+			
+			String consoleRankID = officerSection.getString("console", null);
+			if (consoleRankID == null) {
+			    this.consoleRank = Optional.of(officerRanks.get(officerRanks.size() - 1));
+			} else {
+			    this.consoleRank = Optional.of(officerRanks.stream().filter(rank -> rank.getId().equals(consoleRankID)).findFirst().get());
+			}
 		} else {
-			this.consoleRank = Optional.of(new Rank(Optional.empty(), Optional.empty(), crs));
+		    this.consoleRank = Optional.empty();
 		}
-		
-		List<String> eligibleMobTypes = c.getStringList("eligibleMobs");
-		this.eligibleMobs = new HashSet<>();
-		for (String mobType : eligibleMobTypes) {
-		    this.eligibleMobs.addAll(Arrays.asList(EntityTypes.lookupEntityType(mobType)));
-		}
-
-		this.eligibleMobsName = c.getString("eligibleMobsName");
 
 		ConfigurationSection mss = c.getConfigurationSection("spawns");
 		this.spawns = new HashMap<>();
@@ -109,12 +114,7 @@ public class WastelandConfig {
 	
 	public String databaseFile() { return this.databaseFile; }
 	
-	public boolean prefixTownTag() { return this.prefixTownTag; }
-	public Optional<ChatColor> prefixTownTagColor() { return this.prefixTownTagColor; }
-	
-	public boolean preferOfficerRank() { return this.preferOfficerRank; }
-	public boolean bracketChatRank() { return this.bracketChatRank; }
-	public boolean nameUsesRankColor() { return this.nameUsesRankColor; }
+	public ChatConfig chat() { return this.chat; }
 	
 	public Collection<EnlistedRank> enlistedRanks() { return this.enlistedRanks; }
 	public Collection<Rank> officerRanks() { return this.officerRanks; }

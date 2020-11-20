@@ -4,6 +4,6 @@ import java.util.Optional;
 
 import org.bukkit.entity.Player;
 
-public interface TownyPrefix {
-	public Optional<String> getPrefix(Player player);
+public interface TownAbbreviationProvider {
+	public Optional<String> getTownAbbreviation(Player player);
 }
