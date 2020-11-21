@@ -1,6 +1,5 @@
-package me.jamestmartin.wasteland.commands;
+package me.jamestmartin.wasteland.ranks;
 
-import java.sql.SQLException;
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -11,13 +10,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.jamestmartin.wasteland.Wasteland;
-import me.jamestmartin.wasteland.ranks.EnlistedRank;
+import me.jamestmartin.wasteland.kills.KillsConfig;
+import me.jamestmartin.wasteland.kills.PlayerKillsProvider;
 
 public class CommandRank implements CommandExecutor {
+    private final PlayerKillsProvider killsProvider;
+    private final PlayerRankProvider rankProvider;
     private final String eligibleMobsName;
     
-    public CommandRank(String eligibleMobsName) {
-        this.eligibleMobsName = eligibleMobsName;
+    public CommandRank(KillsConfig killsConfig, PlayerKillsProvider killsProvider, PlayerRankProvider rankProvider) {
+        this.killsProvider = killsProvider;
+        this.rankProvider = rankProvider;
+        this.eligibleMobsName = killsConfig.getEligibleMobsName();
     }
     
 	@Override
@@ -70,9 +74,9 @@ public class CommandRank implements CommandExecutor {
 		}
 		
 		try {
-			int kills = Wasteland.getInstance().getDatabase().getPlayerKills(subject);
-			Optional<EnlistedRank> rank = EnlistedRank.getRankFromKills(kills);
-			Optional<EnlistedRank> nextRank = EnlistedRank.getNextRank(subject);
+			int kills = killsProvider.getPlayerKills(subject);
+			Optional<EnlistedRank> rank = rankProvider.getEnlistedRank(subject);
+			Optional<EnlistedRank> nextRank = rankProvider.getNextRank(subject);
 			if (rank.isPresent()) {
 				sender.sendMessage(playerName + is + "rank " + rank.get().formatFull() + ChatColor.RESET + ".");
 			}
@@ -92,7 +96,7 @@ public class CommandRank implements CommandExecutor {
 			} else {
 				sender.sendMessage(playerName + has + "reached maximum rank.");
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			sender.sendMessage("Command failed due to database exception. Contact the server administrator.");
 			Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to get player kills.", e);
 		}

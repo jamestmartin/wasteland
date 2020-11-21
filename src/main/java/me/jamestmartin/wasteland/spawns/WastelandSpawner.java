@@ -17,15 +17,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
-import me.jamestmartin.wasteland.config.MonsterSpawnConfig;
 import me.jamestmartin.wasteland.util.Pair;
 import me.jamestmartin.wasteland.world.MoonPhase;
 
 public class WastelandSpawner {
-    private final Map<MonsterType, MonsterSpawnConfig> monsters;
+    private final SpawnsConfig config;
     
-    public WastelandSpawner(Map<MonsterType, MonsterSpawnConfig> monsters) {
-        this.monsters = monsters;
+    public WastelandSpawner(SpawnsConfig config) {
+        this.config = config;
     }
     
     public static Collection<MonsterType> spawnableMonstersAt(Location location) {
@@ -70,47 +69,39 @@ public class WastelandSpawner {
      * 
      * Graph: https://www.wolframalpha.com/input/?i=f%28x%29+%3D++e%5E%286%282x+-+1%29%29+%2F+%28e%5E%286%282x+-+1%29%29+%2B+1%29++from+0+to+1
      */
-    private static float logistic(float x) {
-        float eToX = (float) Math.pow(Math.E, 12 * x - 6);
+    private static double logistic(double x) {
+        double eToX = Math.pow(Math.E, 12 * x - 6);
         return eToX / (eToX + 1);
     }
     
-    public static float calculateWeightedLightLevel(Block block, float sunlightWeight, float moonlightWeight, float blocklightWeight) {
-        float weightedSkylight = MoonPhase.getMoonlight(block) * moonlightWeight + MoonPhase.getSunlight(block) * sunlightWeight;
-        float weightedBlocklight = block.getLightFromBlocks() * blocklightWeight;
-        return Math.max(weightedSkylight, weightedBlocklight);
-    }
-    
-    public static float calculateWeightedLightLevelProbability(Block block, int maximumLight, float sunlightWeight, float moonlightWeight, float blocklightWeight) {
-        float weightedLightLevel = calculateWeightedLightLevel(block, sunlightWeight, moonlightWeight, blocklightWeight);
-        if (weightedLightLevel >= maximumLight) {
+    public static double calculateWeightedLightLevelProbability(Block block, MonsterSpawnConfig cfg) {
+        if (!cfg.isWeightedLightLevelWithinBounds(block)) {
             return 0.0f;
         }
-        return 1 - logistic(weightedLightLevel / maximumLight);
+        return 1 - logistic(cfg.calculateWeightedLightLevel(block) / cfg.getMaximumLightLevel());
     }
     
-    public float calculateLightLevelProbability(MonsterType type, Block block) {
-        MonsterSpawnConfig cfg = monsters.get(type);
-        return calculateWeightedLightLevelProbability(block, cfg.maximumLightLevel(), cfg.sunlightWeight(), cfg.moonlightWeight(), cfg.blocklightWeight());
+    public double calculateLightLevelProbability(MonsterType type, Block block) {
+        return calculateWeightedLightLevelProbability(block, config.getMonster(type));
     }
     
-    public float calculateLightLevelProbability(MonsterType type, Location location) {
+    public double calculateLightLevelProbability(MonsterType type, Location location) {
         return calculateLightLevelProbability(type, location.getBlock());
     }
     
-    public float getMoonPhaseMultiplier(MonsterType type, MoonPhase phase) {
-        return monsters.get(type).phaseMultipliers().getOrDefault(phase, 1.0f);
+    public double getMoonPhaseMultiplier(MonsterType type, MoonPhase phase) {
+        return config.getMonster(type).getPhaseMultipliers().getOrDefault(phase, 1.0);
     }
     
-    public float getMoonPhaseMultiplier(MonsterType type, World world) {
+    public double getMoonPhaseMultiplier(MonsterType type, World world) {
         return getMoonPhaseMultiplier(type, MoonPhase.fromWorld(world));
     }
     
-    public float getMoonPhaseMultiplier(MonsterType type, Location location) {
+    public double getMoonPhaseMultiplier(MonsterType type, Location location) {
         return getMoonPhaseMultiplier(type, location.getWorld());
     }
     
-    public float getMoonPhaseMultiplier(MonsterType type, Block block) {
+    public double getMoonPhaseMultiplier(MonsterType type, Block block) {
         return getMoonPhaseMultiplier(type, block.getWorld());
     }
     
@@ -126,7 +117,7 @@ public class WastelandSpawner {
         return countNearbyEntities(Player.class, location);
     }
     
-    public static float calculateNearbyEntitiesMultiplier(Location location) {
+    public static double calculateNearbyEntitiesMultiplier(Location location) {
         final int nearbyMonsters = countNearbyMonsters(location);
         // TODO: Change to be a weighted value based on player distance.
         final int nearbyPlayers = countNearbyPlayers(location);
@@ -138,22 +129,22 @@ public class WastelandSpawner {
         // and screwed unless all the other players were helping you fight.)
         // It's also not a hard spawn cap, but past a point, the spawn rate needs to be severely diminished
         // to prevent massive lag and infinitely-sized hordes.
-        final float idealMobQuantityMultiplier = (float) Math.max(0.5, Math.sqrt(nearbyPlayers)) * 25;
+        final double idealMobQuantityMultiplier = Math.max(0.5, Math.sqrt(nearbyPlayers)) * 25;
         
         // constant factor of 2 allows some mobs to spawn beyond the ideal quantity,
         // which in the logistic curve makes spawning mobs up to that point far more likely.
         return 1 - logistic(nearbyMonsters / idealMobQuantityMultiplier / 2);
     }
     
-    public static float calculateNearbyEntitiesMultiplier(Block block) {
+    public static double calculateNearbyEntitiesMultiplier(Block block) {
         return calculateNearbyEntitiesMultiplier(block.getLocation());
     }
     
-    public float calculateSpawnProbability(MonsterType type, Location location) {
-        final float lightLevelProbability = calculateLightLevelProbability(type, location);
+    public double calculateSpawnProbability(MonsterType type, Location location) {
+        final double lightLevelProbability = calculateLightLevelProbability(type, location);
         
         long time = location.getWorld().getTime();
-        float moonPhaseMultiplier = 0f;
+        double moonPhaseMultiplier = 0f;
         if (time > 12000) { // dawn, dusk, or night
             moonPhaseMultiplier = getMoonPhaseMultiplier(type, location);
             if (time < 13000 || time > 23000) { // dawn or dusk
@@ -161,24 +152,24 @@ public class WastelandSpawner {
             }
         }
         
-        final float nearbyEntitiesMultiplier = calculateNearbyEntitiesMultiplier(location);
+        final double nearbyEntitiesMultiplier = calculateNearbyEntitiesMultiplier(location);
         
         return lightLevelProbability * moonPhaseMultiplier * nearbyEntitiesMultiplier;
     }
     
-    public float calculateSpawnProbability(MonsterType type, Block block) {
+    public double calculateSpawnProbability(MonsterType type, Block block) {
         return calculateSpawnProbability(type, block.getLocation());
     }
     
-    public HashMap<MonsterType, Float> calculateSpawnProbabilities(Location location) {
-        HashMap<MonsterType, Float> spawnWeights = new HashMap<>();
+    public HashMap<MonsterType, Double> calculateSpawnProbabilities(Location location) {
+        HashMap<MonsterType, Double> spawnWeights = new HashMap<>();
         for (MonsterType type : spawnableMonstersAt(location)) {
             spawnWeights.put(type, calculateSpawnProbability(type, location));
         }
         return spawnWeights;
     }
     
-    public HashMap<MonsterType, Float> calculateSpawnProbabilities(Block block) {
+    public HashMap<MonsterType, Double> calculateSpawnProbabilities(Block block) {
         return calculateSpawnProbabilities(block.getLocation());
     }
     
@@ -200,14 +191,14 @@ public class WastelandSpawner {
         return new Location(center.getWorld(), center.getX() + offX, center.getY() + offY, center.getZ() + offZ);
     }
     
-    public static Optional<Pair<MonsterType, Double>> chooseWeightedRandomMonster(Random rand, Map<MonsterType, Float> weights) {
-        double overallSpawnProbability = weights.values().stream().reduce(0.0f, (x, y) -> x + y);
+    public static Optional<Pair<MonsterType, Double>> chooseWeightedRandomMonster(Random rand, Map<MonsterType, Double> weights) {
+        double overallSpawnProbability = weights.values().stream().reduce(0.0, (x, y) -> x + y);
         if (rand.nextDouble() >= overallSpawnProbability) {
             return Optional.empty();
         }
         
         double whichMonster = rand.nextDouble() * overallSpawnProbability;
-        for (Entry<MonsterType, Float> monster : weights.entrySet()) {
+        for (Entry<MonsterType, Double> monster : weights.entrySet()) {
             double successMargin = monster.getValue() - whichMonster;
             if (successMargin > 0) {
                 return Optional.of(new Pair<>(monster.getKey(), successMargin));
@@ -220,7 +211,7 @@ public class WastelandSpawner {
     }
     
     public Optional<Pair<MonsterType, Double>> pickRandomMonster(Random rand, Block block) {
-        Map<MonsterType, Float> weights = calculateSpawnProbabilities(block);
+        Map<MonsterType, Double> weights = calculateSpawnProbabilities(block);
         return chooseWeightedRandomMonster(rand, weights);
     }
     

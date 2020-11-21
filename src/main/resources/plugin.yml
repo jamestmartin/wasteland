@@ -7,29 +7,37 @@ api-version: 1.16
 softdepend: [Towny]
 
 commands:
-   rank:
-      description: View your rank and how many monsters you have killed.
-      usage: "Usage: /<command> [<player>]"
-      permission: wasteland.view-rank
-      permission-message: You do not have permission to view your rank.
-   rankeligiblemobs:
-      description: View a list of monsters which you can kill to get promoted.
-      usage: "Usage: /<command>"
-      permission: wasteland.view-eligible-mobs
-      permission-message: You cannot view the list of promotion-eligible monsters.
-   ranks:
-      description: List the server ranks.
-      usage: "Usage: /<command>"
-   setkills:
-      description: Set another player's number of kills for debugging.
-      usage: "Usage: /<command> [<player>] <kills>"
-      permission: wasteland.kills.set
-      permission-message: You do not have permission to set anyone's kills.
+   wasteland:
+      description: Reload the plugin's configuration.
+      usage: "Usage: /<command> reload"
+      permission: wasteland.reload
+      permission-message: You do not have permission to reload the plugin's configuration.
+
    official:
       description: Make an official announcement using your staff rank.
       usage: "Usage: /<command> <message>"
       permission: wasteland.official
       permission-message: You are not a staff member with an officer rank.
+
+   rank:
+      description: View your rank and how many monsters you have killed.
+      usage: "Usage: /<command> [<player>]"
+      permission: wasteland.view-rank
+      permission-message: You do not have permission to view your rank.
+   ranks:
+      description: List the server ranks.
+      usage: "Usage: /<command>"
+
+   rankeligiblemobs:
+      description: View a list of monsters which you can kill to get promoted.
+      usage: "Usage: /<command>"
+      permission: wasteland.view-eligible-mobs
+      permission-message: You cannot view the list of promotion-eligible monsters.
+   setkills:
+      description: Set another player's number of kills for debugging.
+      usage: "Usage: /<command> [<player>] <kills>"
+      permission: wasteland.kills.set
+      permission-message: You do not have permission to set anyone's kills.
 
    # debug commands
    debugspawn:
@@ -44,6 +52,10 @@ commands:
       permission-message: You do not have permission to view spawn debug information.
 
 permissions:
+   wasteland.reload:
+      description: Allows you to reload the plugin's configuration.
+      default: op
+
    wasteland.chat.officer:
       description: Show a player's officer rank even in normal chat.
       default: false

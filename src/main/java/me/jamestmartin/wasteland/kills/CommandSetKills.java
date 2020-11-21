@@ -1,6 +1,5 @@
-package me.jamestmartin.wasteland.commands;
+package me.jamestmartin.wasteland.kills;
 
-import java.sql.SQLException;
 import java.util.logging.Level;
 
 import org.bukkit.command.Command;
@@ -10,7 +9,13 @@ import org.bukkit.entity.Player;
 
 import me.jamestmartin.wasteland.Wasteland;
 
-public class CommandSetKills implements CommandExecutor {
+class CommandSetKills implements CommandExecutor {
+    private final PlayerKillsStore store;
+    
+    public CommandSetKills(PlayerKillsStore store) {
+        this.store = store;
+    }
+    
 	@Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!sender.hasPermission("wasteland.kills.set")) {
@@ -66,13 +71,11 @@ public class CommandSetKills implements CommandExecutor {
 		}
 		
 		try {
-		    int previousKills = Wasteland.getInstance().getDatabase().getPlayerKills(subject);
-		    
-			Wasteland.getInstance().getDatabase().setPlayerKills(subject, kills);
-			Wasteland.getInstance().updatePlayerRank(subject);
+		    int previousKills = store.getPlayerKills(subject);
+			store.setPlayerKills(subject, kills);
 			sender.sendMessage(playerNowHas + " " + kills + " kills.");
 			Wasteland.getInstance().getLogger().info(sender.getName() + " has changed the number of kills " + subject.getName() + " has from " + previousKills + " to " + kills);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to set player kills.", e);
 			sender.sendMessage("ERROR: Failed to update player kills. Please notify a server administrator.");
 		}

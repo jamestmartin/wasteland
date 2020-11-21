@@ -32,16 +32,30 @@ chat:
 #       abbreviation: <rank abbreviation> # optional, defaults to the name
 #       description: <rank description>   # optional, defaults to `enlisted.description`.
 #       succeeds: <rankID>                # optional, the prior rank (defaults to nothing)
-#       preferred: <bool>                 # optional, used to disambiguate multiple ranks
+#       preferred: <rankID>               # optional, used to disambiguate multiple ranks
 #                                         #           which both succeed the same rank.
-#                                         #           Defaults to `true`.
+#                                         #           If there is only one successor, it defaults to that.
 #       color: <ColorCode>                # optional
 #       decoration: <ColorCode>           # optional, defaults to `enlisted.decoration`
-#       kills: <0+>                       # optional, but the rank won't be used without it
+#       kills: <0+>                       # optional, but the rank won't be automatically used without it
 #    ...
 #
-# The last listed rank that a player qualifies for will always be the one chosen.
-# Players will automatically be promoted to any ranks they have enough kills for.
+# You *must* set a default enlisted rank by setting the rank's kills to 0; the plugin will break if you don't.
+# Setting multiple default ranks is undefined behavior.
+# It may be possible for a player to have no rank in the future, but it is not for now.
+#
+# Players will automatically be promoted to their preferred rank if they have enough kills for it.
+# If there are ambiguous ranks, then:
+# * If the player has permission `wasteland.prefer-rank.<rankId>`, then they will be promoted to their preferred rank.
+# * If one of the next ranks is `preferred`, then they will be promoted to that rank.
+# * Otherwise, they will *not* be promoted until a `prefer-rank` permission is set.
+#
+# Setting a player's preferred rank will retroactively update their rank to that rank
+# (e.g. if a player is MGySgt and you set `wasteland.prefer-rank.fstsgt`, they will become SgtMaj),
+# but only when the plugin's configuration (or the whole plugin) is reloaded.
+#
+# It is also possible to set a player's rank to a rank they do not have the kills for,
+# by using the `wasteland.rank.<rankID>` permission.
 #
 
 # The default ranks are based on those of the U.S. marines.
@@ -51,28 +65,6 @@ chat:
 
 enlisted:
   description: "{kills} kills."
-  promotions:
-    # The eligible monsters are the entity types which, if killed, will count towards your next promotion.
-    # Each value must be a valid Bukkit EntityType (e.g. `WITHER_SKELETON` or `ENDERMAN`),
-    # or one of these built-in entitiy collections:
-    # * `bosses`: The ender dragon or wither.
-    # * `hostiles`: Mobs which will attack you on sight, including the bosses.
-    # * `neutrals`: Mobs which will only attack you under certain conditions,
-    #               e.g. wolves attack you if attacked, enderman attack you if looked at, spiders attack in the dark.
-    # * `monsters`: Mobs which are eligiable for the "Monster Hunter" achievement,
-    #               which is to say all of the hostile mobs, endermen, spiders, and zombified piglins.
-    # * `zombies`: All zombies, including zombified piglins.
-    # * `spiders`: All spiders: regular spiders and cave spiders.
-    #
-    # The wiki lists which mobs are bosses, hostile, or neutral: https://minecraft.gamepedia.com/Mob#List_of_mobs
-    # Monsters are defined as the mobs which are eligible for the Monster Hunter achievement
-    # (all hostile mobs plus endermen, spiders, and zombified piglins).
-    #
-    # This defaults to monsters.
-    eligible:
-      # You must give a name for messages to the player, for e.g. "You must kill X more ??? before your next promotion."
-      name: monsters
-      entities: [bosses, monsters]
   ranks:
     # A default rank which is not part of the marines.
     fodder:
@@ -123,15 +115,15 @@ enlisted:
       name: Gunnery Sergeant
       abbreviation: GySgt
       succeeds: ssgt
+      preferred: msgt
       color: AQUA
       kills: 10000
-    # Alternative DARK_RED rank, currently unused.
+    # Alternative DARK_RED rank.
     fstsgt:
       name: First Sergeant
       abbreviation: 1stSgt
-      description: Unused alternative rank for {kills} kills.
+      description: {kills} kills. Alternative rank to GySgt.
       succeeds: gysgt
-      preferred: false
       color: DARK_RED
       kills: 25000
     msgt:
@@ -140,11 +132,11 @@ enlisted:
       succeeds: gysgt
       color: DARK_RED
       kills: 25000
-    # Alternative DARK_PURPLE rank, currently unused.
+    # Alternative DARK_PURPLE rank.
     sgtmaj:
       name: Sergeant Major
       abbreviation: SgtMaj
-      description: Unused alternative rank for {kills} kills.
+      description: A survivor of the wasteland, with over {kills} kills. Alternative rank to MGySgt, promoted from 1stSgt.
       succeeds: fstsgt
       color: DARK_PURPLE
       kills: 50000
@@ -168,7 +160,7 @@ enlisted:
 officer:
   decoration: BOLD
   # The rank used by the console when it makes an official message.
-  # Defaults to whatever the last rank listed is.
+  # This *must* be specified or the plugin will break.
   console: gas
   ranks:
     sndlt:
@@ -225,6 +217,27 @@ officer:
       abbreviation: GAS
       description: The server console.
       color: GOLD
+
+kills:
+  # The eligible monsters are the entity types which, if killed, will count towards your next promotion.
+  # Each value must be a valid Bukkit EntityType (e.g. `WITHER_SKELETON` or `ENDERMAN`),
+  # or one of these built-in entitiy collections:
+  # * `bosses`: The ender dragon or wither.
+  # * `hostiles`: Mobs which will attack you on sight, including the bosses.
+  # * `neutrals`: Mobs which will only attack you under certain conditions,
+  #               e.g. wolves attack you if attacked, enderman attack you if looked at, spiders attack in the dark.
+  # * `monsters`: Mobs which are eligiable for the "Monster Hunter" achievement,
+  #               which is to say all of the hostile mobs, endermen, spiders, and zombified piglins.
+  # * `zombies`: All zombies, including zombified piglins.
+  # * `spiders`: All spiders: regular spiders and cave spiders.
+  #
+  # The wiki lists which mobs are bosses, hostile, or neutral: https://minecraft.gamepedia.com/Mob#List_of_mobs
+  # Monsters are defined as the mobs which are eligible for the Monster Hunter achievement
+  # (all hostile mobs plus endermen, spiders, and zombified piglins).
+  eligible:
+    # You must give a name for messages to the player, for e.g. "You must kill X more ??? before your next promotion."
+    name: monsters
+    entities: [bosses, monsters]
 
 #
 # spawns:

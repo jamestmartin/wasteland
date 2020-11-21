@@ -1,4 +1,4 @@
-package me.jamestmartin.wasteland.commands;
+package me.jamestmartin.wasteland.spawns;
 
 import java.util.Optional;
 import java.util.Random;
@@ -10,9 +10,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import me.jamestmartin.wasteland.Wasteland;
-
 public class CommandDebugSpawn implements CommandExecutor {
+    private final WastelandSpawner spawner;
+    
+    public CommandDebugSpawn(WastelandSpawner spawner) {
+        this.spawner = spawner;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -40,7 +43,7 @@ public class CommandDebugSpawn implements CommandExecutor {
         
         int successfulSpawns = 0;
         for (int attempt = 0; attempt < attempts; attempt++) {
-            Optional<LivingEntity> tryMonster = Wasteland.getInstance().getSpawner().trySpawn(rand, player.getLocation());
+            Optional<LivingEntity> tryMonster = spawner.trySpawn(rand, player.getLocation());
             if (tryMonster.isEmpty()) {
                 continue;
             }

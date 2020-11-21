@@ -1,4 +1,4 @@
-package me.jamestmartin.wasteland;
+package me.jamestmartin.wasteland.store;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.bukkit.entity.Player;
 
-public class Database implements AutoCloseable {
+import me.jamestmartin.wasteland.kills.PlayerKillsStore;
+
+public class SqliteDatabase implements AutoCloseable, PlayerKillsStore {
 	private static final String CREATE_KILLS_TABLE =
 			"CREATE TABLE IF NOT EXISTS player_kills"
 			+ "( `player` VARCHAR(36) PRIMARY KEY"
@@ -20,18 +22,18 @@ public class Database implements AutoCloseable {
 			"INSERT OR IGNORE INTO `player_kills`(`player`, `kills`) VALUES (?, 0)";
 	private static final String GET_PLAYER_KILLS =
 			"SELECT `kills` FROM `player_kills` WHERE `player` = ?";
-	private static final String INCREMENT_PLAYER_KILLS =
-			"UPDATE `player_kills` SET `kills`=`kills` + 1 WHERE `player` = ?";
+	private static final String ADD_PLAYER_KILLS =
+			"UPDATE `player_kills` SET `kills`=`kills` + ? WHERE `player` = ?";
 	private static final String SET_PLAYER_KILLS =
 			"UPDATE `player_kills` SET `kills` = ? WHERE `player` = ?";
 	
 	private final Connection connection;
 	private final PreparedStatement psInitPlayerKills;
 	private final PreparedStatement psGetPlayerKills;
-	private final PreparedStatement psIncrementPlayerKills;
+	private final PreparedStatement psAddPlayerKills;
 	private final PreparedStatement psSetPlayerKills;
 	
-	public Database(File file)
+	public SqliteDatabase(File file)
 		throws IOException, ClassNotFoundException, SQLException {
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
@@ -51,17 +53,19 @@ public class Database implements AutoCloseable {
 		
 		psInitPlayerKills = connection.prepareStatement(INIT_PLAYER_KILLS);
 		psGetPlayerKills = connection.prepareStatement(GET_PLAYER_KILLS);
-		psIncrementPlayerKills = connection.prepareStatement(INCREMENT_PLAYER_KILLS);
+		psAddPlayerKills = connection.prepareStatement(ADD_PLAYER_KILLS);
 		psSetPlayerKills = connection.prepareStatement(SET_PLAYER_KILLS);
 	}
 	
-	public void initPlayerKills(Player player) throws SQLException {
+	@Override
+	public void initPlayer(Player player) throws SQLException {
 		String playerUUID = player.getUniqueId().toString();
 		psInitPlayerKills.setString(1, playerUUID);
 		psInitPlayerKills.executeUpdate();
 		connection.commit();
 	}
 	
+	@Override
 	public int getPlayerKills(Player player) throws SQLException
 	{
 		String playerUUID = player.getUniqueId().toString();
@@ -72,10 +76,12 @@ public class Database implements AutoCloseable {
 		}
 	}
 	
-	public void incrementPlayerKills(Player player) throws SQLException {
+	@Override
+	public void addPlayerKills(Player player, int kills) throws SQLException {
 		String playerUUID = player.getUniqueId().toString();
-		psIncrementPlayerKills.setString(1, playerUUID);
-		psIncrementPlayerKills.executeUpdate();;
+        psAddPlayerKills.setInt(1, kills);
+		psAddPlayerKills.setString(2, playerUUID);
+		psAddPlayerKills.executeUpdate();;
 		connection.commit();
 	}
 	
@@ -85,7 +91,7 @@ public class Database implements AutoCloseable {
 		String playerUUID = player.getUniqueId().toString();
 		psSetPlayerKills.setInt(1, kills);
 		psSetPlayerKills.setString(2, playerUUID);
-		psSetPlayerKills.executeUpdate();;
+		psSetPlayerKills.executeUpdate();
 		connection.commit();
 	}
 	
@@ -93,7 +99,7 @@ public class Database implements AutoCloseable {
 	public void close() throws SQLException {
 		psInitPlayerKills.close();
 		psGetPlayerKills.close();
-		psIncrementPlayerKills.close();
+		psAddPlayerKills.close();
 		psSetPlayerKills.close();
 		connection.commit();
 		connection.close();
