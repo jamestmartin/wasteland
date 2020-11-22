@@ -122,7 +122,7 @@ enlisted:
     fstsgt:
       name: First Sergeant
       abbreviation: 1stSgt
-      description: {kills} kills. Alternative rank to GySgt.
+      description: "{kills} kills. Alternative rank to GySgt."
       succeeds: gysgt
       color: DARK_RED
       kills: 25000
@@ -136,7 +136,7 @@ enlisted:
     sgtmaj:
       name: Sergeant Major
       abbreviation: SgtMaj
-      description: A survivor of the wasteland, with over {kills} kills. Alternative rank to MGySgt, promoted from 1stSgt.
+      description: A survivor of the wasteland, with over {kills} kills. Alternative rank to MSgt, promoted from 1stSgt.
       succeeds: fstsgt
       color: DARK_PURPLE
       kills: 50000
@@ -349,4 +349,21 @@ spawns:
          WAXING_GIBBOUS: 1.5
          WANING_GIBBOUS: 1.5
          NEW: 0.5
+         
+kit:
+  # How long a player has to wait between kits, in ticks.
+  # The default is five minutes.
+  period: 6000
+  # A random durability will be chosen per tool depending on how many kits the player has received.
+  # The tool will not be dropped if the durability chosen is less than one eight of the item's max.
+  tools:
+  - GOLDEN_SWORD
+  - GOLDEN_PICKAXE
+  - GOLDEN_SHOVEL
+  - GOLDEN_AXE
+  - GOLDEN_HOE
+  # A random quantity will be chosen depending on how many kits the player has received.
+  # The item type will not be dropped if the quantity chosen is less than one eighth of the maximum.
+  items:
+    ROTTEN_FLESH: 32
    

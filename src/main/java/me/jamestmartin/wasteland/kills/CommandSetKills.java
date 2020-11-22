@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import me.jamestmartin.wasteland.Wasteland;
 
 class CommandSetKills implements CommandExecutor {
-    private final PlayerKillsStore store;
+    private final KillsStore store;
     
-    public CommandSetKills(PlayerKillsStore store) {
+    public CommandSetKills(KillsStore store) {
         this.store = store;
     }
     

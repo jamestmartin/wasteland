@@ -9,15 +9,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
 import me.jamestmartin.wasteland.Wasteland;
-import me.jamestmartin.wasteland.kills.PlayerKillsStore;
+import me.jamestmartin.wasteland.kills.KillsStore;
 
 public class RankAttachments {
     private final EnlistedRanks ranks;
-    private final PlayerKillsStore killsStore;
+    private final KillsStore killsStore;
     
     private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     
-    public RankAttachments(EnlistedRanks ranks, PlayerKillsStore killsStore) {
+    public RankAttachments(EnlistedRanks ranks, KillsStore killsStore) {
         this.ranks = ranks;
         this.killsStore = killsStore;
     }
@@ -36,14 +36,9 @@ public class RankAttachments {
         }
     }
     
-    private void createAttachment(Player player) throws Exception {
+    void createAttachment(Player player) throws Exception {
         int kills = killsStore.getPlayerKills(player);
         createAttachment(player, kills);
-    }
-    
-    public void initializePlayer(Player player) throws Exception {
-        killsStore.initPlayer(player);
-        createAttachment(player);
     }
     
     public void updatePlayerRank(Player player) throws Exception {
@@ -59,7 +54,7 @@ public class RankAttachments {
     public void register() {
         for (Player player : Wasteland.getInstance().getServer().getOnlinePlayers()) {
             try {
-                initializePlayer(player);
+                createAttachment(player);
             } catch (Exception e) {
                 Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to get player's kills.", e);
             }
@@ -76,7 +71,7 @@ public class RankAttachments {
         attachments.clear();
     }
     
-    public class AttachmentUpdatingPlayerKillsStore implements PlayerKillsStore {
+    public class AttachmentUpdatingPlayerKillsStore implements KillsStore {
         @Override
         public int getPlayerKills(Player player) throws Exception {
             return killsStore.getPlayerKills(player);

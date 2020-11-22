@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.permissions.Permission;
@@ -23,6 +24,7 @@ import com.google.common.graph.ValueGraphBuilder;
 import me.jamestmartin.wasteland.WastelandConfig;
 import me.jamestmartin.wasteland.chat.ChatConfig;
 import me.jamestmartin.wasteland.kills.KillsConfig;
+import me.jamestmartin.wasteland.kit.KitConfig;
 import me.jamestmartin.wasteland.ranks.AllRanks;
 import me.jamestmartin.wasteland.ranks.EnlistedRank;
 import me.jamestmartin.wasteland.ranks.EnlistedRanks;
@@ -40,12 +42,13 @@ public class ConfigParser {
         ChatConfig chatConfig = parseChatConfig(c.getConfigurationSection("chat"));
         KillsConfig killsConfig = parseKillsConfig(c.getConfigurationSection("kills"));
         SpawnsConfig spawnsConfig = parseSpawnsConfig(c.getConfigurationSection("spawns"));
+        KitConfig kitConfig = parseKitConfig(c.getConfigurationSection("kit"));
         
         ConfigurationSection enlistedSection = c.getConfigurationSection("enlisted");
         ConfigurationSection officerSection = c.getConfigurationSection("officer");
         AllRanks ranks = parseRanks(enlistedSection, officerSection);
         
-        return new WastelandConfig(databaseFilename, chatConfig, killsConfig, ranks, spawnsConfig);
+        return new WastelandConfig(databaseFilename, chatConfig, killsConfig, ranks, spawnsConfig, kitConfig);
     }
     
     private static ChatConfig parseChatConfig(ConfigurationSection c) {
@@ -281,6 +284,23 @@ public class ConfigParser {
                 blocklightWeight, sunlightWeight, moonlightWeight,
                 minimumYLevel, maximumYLevel,
                 phaseMultipliers);
+    }
+    
+    private static KitConfig parseKitConfig(ConfigurationSection c) {
+        long kitPeriod = c.getLong("period");
+        
+        List<Material> kitTools = new ArrayList<>();
+        for (String tool : c.getStringList("tools")) {
+            kitTools.add(Material.valueOf(tool));
+        }
+        
+        ConfigurationSection itemsc = c.getConfigurationSection("items");
+        Map<Material, Integer> kitItems = new HashMap<>();
+        for (String item : itemsc.getKeys(false)) {
+            kitItems.put(Material.valueOf(item), itemsc.getInt(item));
+        }
+        
+        return new KitConfig(kitPeriod, kitTools, kitItems);
     }
     
     /** Orphaned method. */

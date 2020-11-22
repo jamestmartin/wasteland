@@ -50,6 +50,12 @@ commands:
       usage: "Usage: /<command>"
       permission: wasteland.debug.spawns.weights
       permission-message: You do not have permission to view spawn debug information.
+      
+   kit:
+      description: Get some free starter gear.
+      usage: "Usage: /<command>"
+      permission: wasteland.kit
+      permission-message: You do not have permission to receive a starter kit.
 
 permissions:
    wasteland.reload:
@@ -107,3 +113,7 @@ permissions:
    wasteland.debug.spawns.weights:
       description: Allows you to see the spawn weights by mob type at a block.
       default: false
+      
+   wasteland.kit:
+      description: Allows you to receive a starter kit.
+      default: true

@@ -22,7 +22,7 @@ public class RankAttachmentsListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         try {
-            attachments.initializePlayer(player);
+            attachments.createAttachment(player);
         } catch (Exception e) {
             Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to get player's kills.", e);
             return;

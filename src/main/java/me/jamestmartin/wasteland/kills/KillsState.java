@@ -11,7 +11,7 @@ public class KillsState implements Substate {
     private final CommandRankEligibleMobs commandRankEligibleMobs;
     private final CommandSetKills commandSetKills;
     
-    public KillsState(KillsConfig config, PlayerKillsStore store, PlayerRankProvider rankProvider) {
+    public KillsState(KillsConfig config, KillsStore store, PlayerRankProvider rankProvider) {
         this.killsListener = new KillsListener(config, store, rankProvider);
         this.commandRankEligibleMobs = new CommandRankEligibleMobs(config);
         this.commandSetKills = new CommandSetKills(store);

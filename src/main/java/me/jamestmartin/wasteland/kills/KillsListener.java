@@ -15,10 +15,10 @@ import me.jamestmartin.wasteland.ranks.PlayerRankProvider;
 
 class KillsListener implements Listener {
     private final KillsConfig config;
-    private final PlayerKillsStore store;
+    private final KillsStore store;
     private final PlayerRankProvider provider;
 	
-	public KillsListener(KillsConfig config, PlayerKillsStore store, PlayerRankProvider provider) {
+	public KillsListener(KillsConfig config, KillsStore store, PlayerRankProvider provider) {
 	    this.config = config;
 	    this.store = store;
 	    this.provider = provider;

@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.jamestmartin.wasteland.Substate;
 import me.jamestmartin.wasteland.kills.KillsConfig;
-import me.jamestmartin.wasteland.kills.PlayerKillsStore;
+import me.jamestmartin.wasteland.kills.KillsStore;
 
 public class RanksState implements Substate {
     private final RankAttachmentsListener rankAttachmentsListener;
@@ -15,9 +15,9 @@ public class RanksState implements Substate {
     private final CommandRanks commandRanks;
     
     private final RankAttachments rankAttachments;
-    private final PlayerKillsStore killsStore;
+    private final KillsStore killsStore;
     
-    public RanksState(KillsConfig killsConfig, PlayerKillsStore killsStore, PlayerRankProvider rankProvider) {
+    public RanksState(KillsConfig killsConfig, KillsStore killsStore, PlayerRankProvider rankProvider) {
         this.rankAttachments = new RankAttachments(rankProvider.getRanks().getEnlistedRanks(), killsStore);
         this.rankAttachmentsListener = new RankAttachmentsListener(rankAttachments);
         this.killsStore = rankAttachments.new AttachmentUpdatingPlayerKillsStore();
@@ -26,7 +26,7 @@ public class RanksState implements Substate {
         this.commandRanks = new CommandRanks(rankProvider.getRanks());
     }
     
-    public PlayerKillsStore getPlayerKillsStore() {
+    public KillsStore getPlayerKillsStore() {
         return killsStore;
     }
 

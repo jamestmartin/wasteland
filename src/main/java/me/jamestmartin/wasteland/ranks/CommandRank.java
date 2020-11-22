@@ -11,14 +11,14 @@ import org.bukkit.entity.Player;
 
 import me.jamestmartin.wasteland.Wasteland;
 import me.jamestmartin.wasteland.kills.KillsConfig;
-import me.jamestmartin.wasteland.kills.PlayerKillsProvider;
+import me.jamestmartin.wasteland.kills.KillsProvider;
 
 public class CommandRank implements CommandExecutor {
-    private final PlayerKillsProvider killsProvider;
+    private final KillsProvider killsProvider;
     private final PlayerRankProvider rankProvider;
     private final String eligibleMobsName;
     
-    public CommandRank(KillsConfig killsConfig, PlayerKillsProvider killsProvider, PlayerRankProvider rankProvider) {
+    public CommandRank(KillsConfig killsConfig, KillsProvider killsProvider, PlayerRankProvider rankProvider) {
         this.killsProvider = killsProvider;
         this.rankProvider = rankProvider;
         this.eligibleMobsName = killsConfig.getEligibleMobsName();
@@ -88,13 +88,13 @@ public class CommandRank implements CommandExecutor {
 					andHasToGo = " and" + need + "to kill " + moreZombies
 							+ " more to reach " + nextRank.get().formatFull() + ChatColor.RESET + ".";
 				} else {
-					andHasToGo = " and" + has + "reached maximum rank.";
+					andHasToGo = " and" + has + "no further promotions available.";
 				}
 				sender.sendMessage(hasKilled + andHasToGo);
 			} else if (nextRank.isPresent()) {
 				sender.sendMessage(playerNameS + " next rank will be " + nextRank.get().formatExtended() + ChatColor.RESET + ".");
 			} else {
-				sender.sendMessage(playerName + has + "reached maximum rank.");
+				sender.sendMessage(playerName + has + "no further promotions available.");
 			}
 		} catch (Exception e) {
 			sender.sendMessage("Command failed due to database exception. Contact the server administrator.");
