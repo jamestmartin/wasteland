@@ -1,0 +1,32 @@
+#
+# groups:
+#  default:
+#    permission.for.newbies: true  # track a player's permission
+#  <groupName>:
+#    # Permissions in later groups take precedent over permissions in earlier groups,
+#    # e.g. if `first-group` disables `foo.bar` and `some-other-group` disables it, `foo.bar` will be disabled.
+#    inherits:
+#    - first-group
+#    - some-other-group
+#    permissions:
+#      my.permission: true
+#      some.bad.permission: false    # disable a permission that was enabled by default
+#      shared.top.level.node:
+#        a.b: true                   # same as: `shared.top.lavel.node.a.b: true`
+#        c.d: true
+#
+# players:
+#   # You *must* use player UUIDs, not player names.
+#   # You can see a player's UUID in the server log when they join, or look it up online.
+#   # I would recommend including the player's name as a comment to help you remember whose UUID this is.
+#   <player-uuid>:
+#     permissions:
+#     - permission.just.for.me: true
+#     groups:
+#     - my-group
+#     - some-other-group
+#
+
+groups: {}
+
+players: {}

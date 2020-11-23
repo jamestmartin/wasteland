@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
@@ -29,7 +28,6 @@ import me.jamestmartin.wasteland.kills.KillsConfig;
 import me.jamestmartin.wasteland.kit.KitConfig;
 import me.jamestmartin.wasteland.manual.ManualConfig;
 import me.jamestmartin.wasteland.manual.ManualSection;
-import me.jamestmartin.wasteland.permissions.PermissionsConfig;
 import me.jamestmartin.wasteland.ranks.AllRanks;
 import me.jamestmartin.wasteland.ranks.EnlistedRank;
 import me.jamestmartin.wasteland.ranks.EnlistedRanks;
@@ -61,8 +59,6 @@ public class ConfigParser {
                 parseManualSectionList(castToSectionList(c.getMapList("faq"))));
         ManualConfig manualConfig = new ManualConfig(rules, faq);
         
-        PermissionsConfig permissionsConfig = parsePermissionsConfig(c.getConfigurationSection("permissions"));
-        
         return new WastelandConfig(
                 databaseFilename,
                 chatConfig,
@@ -70,8 +66,7 @@ public class ConfigParser {
                 ranks,
                 spawnsConfig,
                 kitConfig,
-                manualConfig,
-                permissionsConfig);
+                manualConfig);
     }
     
     private static ChatConfig parseChatConfig(ConfigurationSection c) {
@@ -352,39 +347,6 @@ public class ConfigParser {
         }
         
         return sections;
-    }
-    
-    public static PermissionsConfig parsePermissionsConfig(ConfigurationSection c) {
-        Map<String, Map<String, Boolean>> groupPermissions = new HashMap<>();
-        ConfigurationSection groupsSection = c.getConfigurationSection("groups");
-        for (String group : groupsSection.getKeys(false)) {
-            groupPermissions.put(group, parsePermissions(groupsSection.getConfigurationSection(group)));
-        }
-        
-        Map<UUID, Set<String>> playerGroups = new HashMap<>();
-        ConfigurationSection playersSection = c.getConfigurationSection("players");
-        for (String player : playersSection.getKeys(false)) {
-            UUID uuid = UUID.fromString(player);
-            Set<String> groups = playersSection.getList(player).stream().map(x -> (String) x)
-                    .collect(Collectors.toUnmodifiableSet());
-            playerGroups.put(uuid, groups);
-        }
-        
-        return new PermissionsConfig(groupPermissions, playerGroups);
-    }
-    
-    public static Map<String, Boolean> parsePermissions(ConfigurationSection c) {
-        Map<String, Boolean> permissions = new HashMap<>();
-        for (String node : c.getKeys(false)) {
-            if (c.isBoolean(node)) {
-                permissions.put(node,  c.getBoolean(node));
-            } else {
-                for (Entry<String, Boolean> entry : parsePermissions(c.getConfigurationSection(node)).entrySet()) {
-                    permissions.put(node + "." + entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        return permissions;
     }
     
     /** Orphaned method. */

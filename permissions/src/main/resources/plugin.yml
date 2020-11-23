@@ -1,0 +1,23 @@
+name: WastelandPermissions
+author: HuskFodder
+main: me.jamestmartin.wasteland.permissions.WastelandPermissions
+version: 0.1.0
+api-version: 1.16
+
+commands:
+   wp: 
+     description: Manage the Wasteland Permissions plugin.
+     usage: "Usage: /<command> [reload]"
+     permission: wasteland.permissions
+     permission-message: You do not have permission to reload Wasteland Permission' config.
+
+permissions:
+   wasteland.permissions:
+     description: Allows you to manage Wasteland Permissions.
+     default: op
+     children:
+        wasteland.permissions.reload: true
+  
+   wasteland.permissions.reload:
+     description: Allows you to reload Wasteland Permissions' config.
+     default: op

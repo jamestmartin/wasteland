@@ -7,14 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
-import me.jamestmartin.wasteland.Wasteland;
+import me.jamestmartin.wasteland.permissions.api.Permissions;
 
 class PermissionsAttachments {
-    private final PermissionsConfig config;
+    private final Permissions config;
 
     private final Map<UUID, PermissionAttachment> attachments = new ConcurrentHashMap<>();
     
-    public PermissionsAttachments(PermissionsConfig config) {
+    public PermissionsAttachments(Permissions config) {
         this.config = config;
     }
     
@@ -26,12 +26,12 @@ class PermissionsAttachments {
     }
     
     void createAttachment(Player player) {
-        Map<String, Boolean> permissions = config.getPermissions(player);
+        Map<String, Boolean> permissions = config.getPlayerGroup(player).getPermissions();
         if (permissions.isEmpty()) {
             return;
         }
 
-        PermissionAttachment attachment = player.addAttachment(Wasteland.getInstance());
+        PermissionAttachment attachment = player.addAttachment(WastelandPermissions.getInstance());
         attachments.put(player.getUniqueId(), attachment);
         for (Entry<String, Boolean> permission : permissions.entrySet()) {
             attachment.setPermission(permission.getKey(), permission.getValue());
@@ -44,14 +44,14 @@ class PermissionsAttachments {
     }
     
     void register() {
-        for (Player player : Wasteland.getInstance().getServer().getOnlinePlayers()) {
+        for (Player player : WastelandPermissions.getInstance().getServer().getOnlinePlayers()) {
             createAttachment(player);
         }
     }
     
     void unregister() {
         for(Map.Entry<UUID, PermissionAttachment> attachment : attachments.entrySet()) {
-            Wasteland.getInstance().getServer().getPlayer(attachment.getKey())
+            WastelandPermissions.getInstance().getServer().getPlayer(attachment.getKey())
                 .removeAttachment(attachment.getValue());
             attachments.remove(attachment.getKey());
         }
