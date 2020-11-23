@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,6 +26,8 @@ import me.jamestmartin.wasteland.WastelandConfig;
 import me.jamestmartin.wasteland.chat.ChatConfig;
 import me.jamestmartin.wasteland.kills.KillsConfig;
 import me.jamestmartin.wasteland.kit.KitConfig;
+import me.jamestmartin.wasteland.manual.ManualConfig;
+import me.jamestmartin.wasteland.manual.ManualSection;
 import me.jamestmartin.wasteland.ranks.AllRanks;
 import me.jamestmartin.wasteland.ranks.EnlistedRank;
 import me.jamestmartin.wasteland.ranks.EnlistedRanks;
@@ -48,7 +51,22 @@ public class ConfigParser {
         ConfigurationSection officerSection = c.getConfigurationSection("officer");
         AllRanks ranks = parseRanks(enlistedSection, officerSection);
         
-        return new WastelandConfig(databaseFilename, chatConfig, killsConfig, ranks, spawnsConfig, kitConfig);
+        ManualSection rules = new ManualSection(
+                "The Server Rules",
+                parseManualSectionList(castToSectionList(c.getMapList("rules"))));
+        ManualSection faq = new ManualSection(
+                "Frequently Asked Questions",
+                parseManualSectionList(castToSectionList(c.getMapList("faq"))));
+        ManualConfig manualConfig = new ManualConfig(rules, faq);
+        
+        return new WastelandConfig(
+                databaseFilename,
+                chatConfig,
+                killsConfig,
+                ranks,
+                spawnsConfig,
+                kitConfig,
+                manualConfig);
     }
     
     private static ChatConfig parseChatConfig(ConfigurationSection c) {
@@ -301,6 +319,34 @@ public class ConfigParser {
         }
         
         return new KitConfig(kitPeriod, kitTools, kitItems);
+    }
+    
+    public static ManualSection parseManualSection(Map<?, ?> c) {
+        String summary = (String) c.get("summary");
+        Optional<String> details = Optional.ofNullable((String) c.get("details"));
+        List<ManualSection> subsections = parseManualSectionList(castToSectionList(c.get("sections")));
+        
+        return new ManualSection(summary, details, subsections);
+    }
+    
+    private static List<Map<?, ?>> castToSectionList(Object x) {
+        if (x == null) {
+            return null;
+        }
+        return ((List<?>) x).stream().map(xx -> (Map<?, ?>) xx).collect(Collectors.toUnmodifiableList());
+    }
+    
+    public static List<ManualSection> parseManualSectionList(List<Map<?, ?>> list) {
+        List<ManualSection> sections = new ArrayList<>();
+        if (list == null) {
+            return sections;
+        }
+        
+        for (Map<?, ?> section : list) {
+            sections.add(parseManualSection(section));
+        }
+        
+        return sections;
     }
     
     /** Orphaned method. */

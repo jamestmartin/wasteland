@@ -30,8 +30,8 @@ public class CommandKit implements CommandExecutor {
     }
     
     private Optional<ItemStack> makeTool(Material material, double quality) {
-        int durability = material.getMaxDurability() - (short) Math.floor(material.getMaxDurability() * rand.nextDouble() * quality);
-        if (durability <= material.getMaxDurability() / 8) {
+        int durability = material.getMaxDurability() - (int) (material.getMaxDurability() * rand.nextDouble() / quality);
+        if (durability <= material.getMaxDurability() / 15) {
             return Optional.empty();
         }
         
@@ -45,7 +45,6 @@ public class CommandKit implements CommandExecutor {
     
     private Collection<ItemStack> selectKitItems(Player player) throws Exception {
         int totalKits = store.getTotalKitsRecieved(player);
-        player.sendMessage("Total: " + totalKits);
         double quality = Math.pow(2, ((double) -totalKits) / 2 + 1);
         
         List<ItemStack> items = new ArrayList<>();
@@ -55,10 +54,10 @@ public class CommandKit implements CommandExecutor {
         }
         
         for (Entry<Material, Integer> item : config.getKitItems().entrySet()) {
-            int quantity = (int) Math.ceil(item.getValue() * rand.nextDouble() * quality);
+            int quantity = (int) (item.getValue() * rand.nextDouble() * quality);
             System.out.println(item.getKey().toString());
             System.out.println(quantity);
-            if (quantity > item.getValue() / 8) {
+            if (quantity > item.getValue() / 15) {
                 items.add(new ItemStack(item.getKey(), quantity));
             }
         }
@@ -86,8 +85,6 @@ public class CommandKit implements CommandExecutor {
                 sender.sendMessage("You've already received a kit recently.");
                 return true;
             }
-
-            sender.sendMessage("Last time: " + store.getLastKitTime(player));
         } catch (Exception e) {
             Wasteland.getInstance().getLogger().log(Level.SEVERE, "Failed to get player's last kit time.", e);
             sender.sendMessage("ERROR: Failed to get last kit time. Please notify a server administrator.");

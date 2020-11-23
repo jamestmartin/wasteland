@@ -35,7 +35,8 @@ public class Wasteland extends JavaPlugin {
         } else {
             towny = new TownyDisabled();
         }
-		
+
+        saveDefaultConfig();
 		initializeConfig();
 		register();
 	}
@@ -50,6 +51,7 @@ public class Wasteland extends JavaPlugin {
 	
 	public void reload() {
 	    getLogger().info("Reloading wasteland...");
+        saveDefaultConfig();
 	    reloadConfig();
 	    initializeConfig();
 	    
@@ -59,7 +61,6 @@ public class Wasteland extends JavaPlugin {
 	}
     
     private void initializeConfig() {
-        saveDefaultConfig();
         config = ConfigParser.parseConfig(getConfig());
     }
 	

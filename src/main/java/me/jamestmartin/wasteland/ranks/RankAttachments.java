@@ -1,8 +1,8 @@
 package me.jamestmartin.wasteland.ranks;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ public class RankAttachments {
     private final EnlistedRanks ranks;
     private final KillsStore killsStore;
     
-    private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
+    private final Map<UUID, PermissionAttachment> attachments = new ConcurrentHashMap<>();
     
     public RankAttachments(EnlistedRanks ranks, KillsStore killsStore) {
         this.ranks = ranks;
