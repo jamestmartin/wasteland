@@ -1,0 +1,193 @@
+name: WastelandModTools
+author: HuskFodder
+main: me.jamestmartin.wasteland.modtools.WastelandModTools
+version: 0.1.0
+api-version: 1.16
+
+commands:
+   modlog:
+      description: See the list of recent actions taken by moderators.
+      usage: "Usage: /<command> [<duration>]"
+      permission: wasteland.modtools.log
+      permission-message: You do not have permission to view the moderator log.
+   infractions:
+      description: See the list of infractions against the rules a player has committed.
+      usage: "Usage: /<infractions> <player> [<duration>]"
+      permission: wasteland.modtools.infractions
+      permission-message: You do not have permission to view players' infractions against the rules.
+   
+   uuid:
+      description: Get the UUID(s) of players who have had a name on this server.
+      usage: "Usage: /<command> <player name>"
+      permission: wasteland.modtools.uuid
+      permission-message: You do not have permission to view player UUIDs.
+   lastseen:
+      description: Get the last time the player with that name or UUID was seen.
+      usage: "Usage: /<command> <player name or UUID>"
+      permission: wasteland.modtools.lastseen
+      permission-message: You do not have permission to view when a player was last seen.
+      
+   rules:
+      description: "Read the server rules. You can view more information about a specific rule using `/rules #`."
+      usage: "Usage: /<command> [<section>] [<player>]"
+      permission: wasteland.manual.rules
+      permission-message: You do not have permission to read the server rules.
+   faq:
+      description: "Read the server FAQ. You can view more information about a specific topic using `/faq #`."
+      usage: "Usage: /<command> [<section>] [<player>]"
+      permission: wasteland.manual.faq
+      permission-message: You do not have permission to read the server FAQ.
+
+   ban:
+      description: Ban a player from the server, preventing them from joining again.
+      usage: "Usage: /<command> <player> <duration> [<rule>] [<reason> ...]"
+      permission: wasteland.modtools.ban.issue
+      permission-message: You do not have permission to ban players.
+   unban:
+      description: Unban a player, allowing them to join again.
+      usage: "Usage: /<command> <player> [<reason> ...]"
+      permission: wasteland.modtools.ban.pardon
+      permission-message: You do not have permission to unban players.
+   bans:
+      description: See the list of all players currently banned from the server.
+      usage: "Usage: /<command> [<player>]"
+      permission: wasteland.modtools.ban.list
+      permission-message: You do not have permission to list banned players.
+
+   kick:
+      description: Kick a player from the server.
+      usage: "Usage: /<command> <player> [<rule>] [<reason> ...]"
+      permission: wasteland.modtools.kick
+      permission-message: You do not have permission to kick players.
+
+   mute:
+      description: Mute a player, preventing them from talking.
+      usage: "Usage: /<command> <player> <duration> [<rule>] [<reason> ...]"
+      permission: wasteland.modtools.mute.issue
+      permission-message: You do not have permission to mute players.
+   unmute:
+      description: Unmute a player, allowing them to talk again.
+      usage: "Usage: /<command> <player> [<reason> ...]"
+      permission: wasteland.modtools.mute.pardon
+      permission-message: You do not have permission to unmute players.
+   mutes:
+      description: See the list of all players currently muted on the server.
+      usage: "Usage: /<command> [<player>]"
+      permission: wasteland.modtools.mutes.list
+      permission-message: You do not have permission to list muted players.
+
+   warn:
+      description: Give a player an official (logged) warning.
+      usage: "Usage: /<command> <player> [<rule>] [<reason> ...]"
+      permission: wasteland.modtools.warn
+      permission-message: You do not have permission to issue warnings to players.
+
+permissions:
+   wasteland.modtools:
+      description: Allows you full access to the moderator tools.
+      default: op
+      children:
+         wasteland.modtools.uuid: true
+         wasteland.modtools.lastseen: true
+         wasteland.modtools.log: true
+         wasteland.modtools.actions: true
+   
+   wasteland.modtools.log:
+      description: Allows you to view the log of moderator actions.
+      default: op
+      children:
+         wasteland.modtools.infractions: true
+         wasteland.modtools.ban.list: true
+         wasteland.modtools.mute.list: true
+         wasteland.modtools.warn.list: true
+   wasteland.modtools.infractions:
+      description: Allows you to see the list of infractions against the rules a player has committed.
+      default: op
+      
+   wasteland.modtools.uuid:
+      description: Allows you to see the UUIDs of players with a given name on this server.
+      default: op
+   wasteland.modtools.lastseen:
+      description: Allows you to see the first and last time a player was seen on this server.
+      default: op
+   
+   wasteland.modtools.actions:
+      description: Allows you to perform any moderator action.
+      default: op
+      children:
+         wasteland.manual.show-other: true
+         wasteland.modtools.ban: true
+         wasteland.modtools.kick: true
+         wasteland.modtools.mute: true
+         wasteland.modtools.warn: true
+      
+   wasteland.manual:
+      description: Allows you to read any manual.
+      default: op
+      children:
+         wasteland.manual.rules: true
+         wasteland.manual.faq: true
+   wasteland.manual.show-other:
+      description: Allows you to forcibly show any manual to someone else.
+      default: op
+      children:
+          wasteland.manual.rules.show-other: true
+          wasteland.manual.faq.show-other: true
+   wasteland.manual.rules:
+      description: Allows you to read the server rules.
+      default: true
+   wasteland.manual.rules.show-other:
+      description: Allows you to forcibly show the server rules to someone else.
+      default: op
+      children:
+         wasteland.manual.rules: true
+   wasteland.manual.faq:
+      description: Allows you to read the FAQ.
+      default: true
+   wasteland.manual.faq.show-other:
+      description: Allows you to forcibly show the FAQ to someone else.
+      default: op
+      children:
+         wasteland.manual.faq: true
+   
+   wasteland.modtools.ban:
+      description: Allows you to ban or unban a player, or list active bans.
+      default: op
+      children:
+         wasteland.modtools.ban.issue: true
+         wasteland.modtools.ban.list: true
+         wasteland.modtools.ban.pardon: true
+   wasteland.modtools.ban.issue:
+      description: Allows you to issue bans.
+      default: op
+   wasteland.modtools.ban.list:
+      description: Allows you to list all active bans.
+      default: op
+   wasteland.modtools.ban.pardon:
+      description: Allows you to remove bans.
+      default: op
+        
+   wasteland.modtools.kick:
+      desription: Allows you to kick players.
+      default: op
+   
+   wasteland.modtools.mute:
+      description: Allows you to mute or unmute a player, or list active mutes.
+      default: op
+      children:
+         wasteland.modtools.mute.issue: true
+         wasteland.modtools.mute.list: true
+         wasteland.modtools.mute.pardon: true
+   wasteland.modtools.mute.issue:
+      description: Allows you to issue mutes.
+      default: op
+   wasteland.modtools.mute.list:
+      description: Allows you to list active mutes.
+      default: op
+   wasteland.modtools.mute.pardon:
+      description: Allows you to remove mutes.
+      default: op
+   
+   wasteland.modtools.warn:
+      description: Allows you to issue a warning against a player.
+      default: op

@@ -22,6 +22,10 @@ class CommandWP implements CommandExecutor {
             return false;
         }
         
+        if (!sender.hasPermission("wasteland.permissions.reload")) {
+            sender.sendMessage("You do not have permission to reload Wasteland Permissions' config.");
+        }
+        
         WastelandPermissions.getInstance().reload();
         sender.sendMessage("Reloaded Wasteland Permissions' configuration.");
         

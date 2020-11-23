@@ -1,0 +1,69 @@
+manuals:
+   rules:
+     - summary: Be civil and respectful.
+       sections: 
+       - summary: If you start getting angry or frustrated, take a break!
+       - summary: Do not harass other players.
+       - summary: Do not use slurs.
+       - summary: Do not advertise.
+       - summary: Do not spam.
+       - summary: Avoid excessive swearing.
+         details: 'What is "excessive" is determined by moderator discretion.'
+     - summary: Be independent and mature.
+       sections:
+       - summary: This is a server intended for adults.
+         details: You will not be banned for being <16 per se, but acting like a child will get you banned no matter how old you are.
+       - summary: RTFM (Read The Field Manual).
+         details: Try to answer questions for yourself (e.g. with `/faq`) before asking them.
+       - summary: Do not whine or beg.
+       - summary: Do not ask moderators to cheat.
+         details: They don't have the ability to, anyway.
+     - summary: Play fairly.
+       sections:
+       - summary: Do not use hacks.
+         details: Hacks are the use of a client or mod designed for cheating.
+       - summary: Do not use exploits.
+         details: Exploits are the use of bugs to gain an unfair advantage (e.g. item duplication) or e.g. bypass protection plugins.
+       - summary: Do not use cheats.
+         details: Do not use x-ray resource packs or any other form of cheating.
+       - summary: Use your power appropriately.
+         details: Use moderator tools and ranks strictly for their intended purpose.
+       - summary: Only use authorized mods.
+         details: Refer to the authorized mods list to see which mods are permitted. If you'd like to use a mod not on that list, you **must ask the administrator(s)** before using it.
+     - summary: Stick to the game.
+       sections:
+       - summary: Keep the chat SFW.
+       - summary: Avoid discussing politics, religion, and the news.
+         details: This is not strictly forbidden, but these discussions may be shut down by moderator discretion.
+       - summary: Do not ask for personal information.
+         details: This includes real name, age, and location.
+       - summary: Do not share anyone else's personal information.
+         details: This includes their real name, age, and location.
+       - summary: Avoid sharing your own personal information.
+         details: You may share your own real name, age, or location, but not e.g. your address or phone number.
+         
+   faq:
+     - summary: Nothing to see here.
+       details: The server administrator has not set an FAQ.
+
+# Set the maximum durations for which moderators are allowed to mute or ban,
+# based on their permission nodes.
+permissions:
+   # The default durations for people with permission to mute/ban, but with no specific duration permission set.
+   # Set this to 0 if you want to require a more specific permission be to set to allow mutes and bans.
+   wasteland.modtools.ban.issue:
+      ban: forever
+   wasteland.modtools.mute.issue:
+      mute: forever
+   # You will not want to leave this section here if you will not be using Wasteland's rank system,
+   # or don't intend to use the officer rank system for staff ranks.
+   wasteland.rank:
+      ltcol:
+         mute: 3h
+         ban: 3h
+      col:
+         mute: 3d
+         ban: 3d
+      bgen:
+         mute: forever
+         ban: forever

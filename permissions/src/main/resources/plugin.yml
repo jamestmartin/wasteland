@@ -9,7 +9,7 @@ commands:
      description: Manage the Wasteland Permissions plugin.
      usage: "Usage: /<command> [reload]"
      permission: wasteland.permissions
-     permission-message: You do not have permission to reload Wasteland Permission' config.
+     permission-message: You do not have permission to manage Wasteland Permissions.
 
 permissions:
    wasteland.permissions:

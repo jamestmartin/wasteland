@@ -1,2 +1,2 @@
 rootProject.name = 'wasteland-all'
-include 'wasteland', 'permissions'
+include 'wasteland', 'permissions', 'modtools'

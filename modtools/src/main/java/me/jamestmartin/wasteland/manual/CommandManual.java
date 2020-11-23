@@ -6,6 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import me.jamestmartin.wasteland.manual.config.ManualSection;
+
 public class CommandManual implements CommandExecutor {
     private final String manualName;
     private final ManualSection manual;

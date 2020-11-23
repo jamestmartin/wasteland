@@ -1,4 +1,4 @@
-package me.jamestmartin.wasteland.manual;
+package me.jamestmartin.wasteland.manual.config;
 
 public class ManualConfig {
     private final ManualSection rules;

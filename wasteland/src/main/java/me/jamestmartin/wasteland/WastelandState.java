@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.jamestmartin.wasteland.chat.ChatState;
 import me.jamestmartin.wasteland.kills.KillsState;
 import me.jamestmartin.wasteland.kit.KitState;
-import me.jamestmartin.wasteland.manual.ManualState;
 import me.jamestmartin.wasteland.ranks.PermissionsPlayerRankProvider;
 import me.jamestmartin.wasteland.ranks.PlayerRankProvider;
 import me.jamestmartin.wasteland.ranks.RanksState;
@@ -25,7 +24,6 @@ public class WastelandState implements Substate {
     private final RanksState ranksState;
     private final SpawnsState spawnsState;
     private final KitState kitState;
-    private final ManualState manualState;
 
     public WastelandState(WastelandConfig config) throws IOException, ClassNotFoundException, SQLException {
         this.commandWasteland = new CommandWasteland();
@@ -37,7 +35,6 @@ public class WastelandState implements Substate {
         this.killsState = new KillsState(config.getKillsConfig(), ranksState.getPlayerKillsStore(), rankProvider);
         this.spawnsState = new SpawnsState(config.getSpawnsConfig());
         this.kitState = new KitState(config.getKitConfig(), storeState.getKitStore());
-        this.manualState = new ManualState(config.getManualConfig());
     }
     
     private Substate[] getSubstates() {
@@ -48,7 +45,6 @@ public class WastelandState implements Substate {
                 ranksState,
                 spawnsState, 
                 kitState,
-                manualState,
         };
         return substates;
     }

@@ -30,6 +30,10 @@ public class ConfigParser {
     }
     
     private static Map<String, Group> parseGroups(ConfigurationSection c) {
+        if (c == null) {
+            return Map.of();
+        }
+        
         Map<String, GroupConfig> groupConfigs = new HashMap<>();
         for (String group : c.getKeys(false)) {
             groupConfigs.put(group, parseGroup(group, c.getConfigurationSection(group)));
@@ -88,6 +92,10 @@ public class ConfigParser {
     
     private static Map<UUID, PlayerGroup> parsePlayers(Map<String, Group> groups, ConfigurationSection c) {
         Map<UUID, PlayerGroup> players = new HashMap<>();
+        if (c == null) {
+            return players;
+        }
+        
         for (String uuidStr : c.getKeys(false)) {
             UUID uuid = UUID.fromString(uuidStr);
             players.put(uuid, parsePlayer(groups, uuidStr, c.getConfigurationSection(uuidStr)));
@@ -103,11 +111,18 @@ public class ConfigParser {
     }
     
     private static PseudoGroupConfig parsePseudoGroup(List<String> inherits, ConfigurationSection permissions) {
+        if (inherits == null) {
+            inherits = List.of();
+        }
         return new PseudoGroupConfig(inherits, parsePermissions(permissions));
     }
     
     private static Map<String, Boolean> parsePermissions(ConfigurationSection c) {
         Map<String, Boolean> permissions = new HashMap<>();
+        if (c == null) {
+            return permissions;
+        }
+        
         for (String node : c.getKeys(false)) {
             if (c.isBoolean(node)) {
                 permissions.put(node,  c.getBoolean(node));

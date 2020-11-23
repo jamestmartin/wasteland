@@ -3,7 +3,6 @@ package me.jamestmartin.wasteland;
 import me.jamestmartin.wasteland.chat.ChatConfig;
 import me.jamestmartin.wasteland.kills.KillsConfig;
 import me.jamestmartin.wasteland.kit.KitConfig;
-import me.jamestmartin.wasteland.manual.ManualConfig;
 import me.jamestmartin.wasteland.ranks.AllRanks;
 import me.jamestmartin.wasteland.spawns.SpawnsConfig;
 
@@ -14,7 +13,6 @@ public class WastelandConfig {
 	private final AllRanks ranks;
 	private final SpawnsConfig spawnsConfig;
 	private final KitConfig kitConfig;
-	private final ManualConfig manualConfig;
 	
 	public WastelandConfig(
 	        String databaseFilename,
@@ -22,15 +20,13 @@ public class WastelandConfig {
 	        KillsConfig killsConfig,
 	        AllRanks ranks,
 	        SpawnsConfig spawnsConfig,
-	        KitConfig kitConfig,
-	        ManualConfig manualConfig) {
+	        KitConfig kitConfig) {
 	    this.databaseFilename = databaseFilename;
 	    this.chatConfig = chatConfig;
 	    this.killsConfig = killsConfig;
 	    this.ranks = ranks;
 	    this.spawnsConfig = spawnsConfig;
 	    this.kitConfig = kitConfig;
-	    this.manualConfig = manualConfig;
 	}
     
     public String getDatabaseFilename() {
@@ -55,9 +51,5 @@ public class WastelandConfig {
 	
 	public KitConfig getKitConfig() {
 	    return kitConfig;
-	}
-	
-	public ManualConfig getManualConfig() {
-	    return manualConfig;
 	}
 }

@@ -1,4 +1,4 @@
-package me.jamestmartin.wasteland.manual;
+package me.jamestmartin.wasteland.manual.config;
 
 import java.util.List;
 import java.util.Optional;
