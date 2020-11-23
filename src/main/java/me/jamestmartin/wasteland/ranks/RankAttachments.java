@@ -62,7 +62,6 @@ public class RankAttachments {
     }
     
     public void unregister() {
-        // Trying to remove attachments throws an error. Perhaps it's done automatically?
         for(Map.Entry<UUID, PermissionAttachment> attachment : attachments.entrySet()) {
             Wasteland.getInstance().getServer().getPlayer(attachment.getKey())
                 .removeAttachment(attachment.getValue());

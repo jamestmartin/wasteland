@@ -413,3 +413,8 @@ rules:
 faq:
   - summary: Nothing to see here.
     details: The server administrator has not set an FAQ.
+
+permissions:
+   default: {}
+   groups: {}
+   players: {}

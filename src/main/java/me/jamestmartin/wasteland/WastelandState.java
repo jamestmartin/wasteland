@@ -9,6 +9,7 @@ import me.jamestmartin.wasteland.chat.ChatState;
 import me.jamestmartin.wasteland.kills.KillsState;
 import me.jamestmartin.wasteland.kit.KitState;
 import me.jamestmartin.wasteland.manual.ManualState;
+import me.jamestmartin.wasteland.permissions.PermissionsState;
 import me.jamestmartin.wasteland.ranks.PermissionsPlayerRankProvider;
 import me.jamestmartin.wasteland.ranks.PlayerRankProvider;
 import me.jamestmartin.wasteland.ranks.RanksState;
@@ -26,6 +27,7 @@ public class WastelandState implements Substate {
     private final SpawnsState spawnsState;
     private final KitState kitState;
     private final ManualState manualState;
+    private final PermissionsState permissionsState;
 
     public WastelandState(WastelandConfig config) throws IOException, ClassNotFoundException, SQLException {
         this.commandWasteland = new CommandWasteland();
@@ -38,10 +40,20 @@ public class WastelandState implements Substate {
         this.spawnsState = new SpawnsState(config.getSpawnsConfig());
         this.kitState = new KitState(config.getKitConfig(), storeState.getKitStore());
         this.manualState = new ManualState(config.getManualConfig());
+        this.permissionsState = new PermissionsState(config.getPermissionsConfig());
     }
     
     private Substate[] getSubstates() {
-        Substate[] substates = { storeState, chatState, killsState, ranksState, spawnsState, kitState, manualState };
+        Substate[] substates = {
+                storeState,
+                chatState,
+                killsState,
+                ranksState,
+                spawnsState, 
+                kitState,
+                manualState,
+                permissionsState
+        };
         return substates;
     }
 
