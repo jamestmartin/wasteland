@@ -31,9 +31,9 @@ This plugin provides tools which both help moderators track what rule infraction
 and help server administrators hold moderators accountable through an audit log.
 
 This plugin provides these basic commands:
-* `/ban` and `/unban`
+* `/ban`
 * `/kick`
-* `/mute` and `/unmute`
+* `/mute`
 * `/warn`
 
 All bans, kicks, mutes, and warnings are logged,
@@ -43,20 +43,23 @@ and to help server administrators hold moderators accountable through an audit l
 It is also possible to set the maximum length of bans or mutes that a moderator can issue
 in the configuration file.
 
-You may view the currently active bans and mutes using `/bans` and `/mutes` respectively,
-or see the history of infractions a player has committed using `/infractions`.
+You may view the currently active sentences against any player,
+the infractions that a moderator has issued,
+or see the history of infractions a player has committed using `/infractions query`.
+This command does not include infractions that have been cleared from a player's record,
+or old versions of infractions from before they were commuted.
 
-You can remove an infraction from a player's account using commands like `/unwarn`.
-Removing an infraction from a player's account will not remove the infraction from the audit log,
-and in fact will just add that the infraction was removed to the audit log.
+You can commute, extend, or update a sentence using `/infractions commute`,
+remove and clear an infraction from a player's record using `/infractions clear`
+or remove a sentence without clearing the infraction from the player's record using `/infractions appeal`.
+These commands do not remove the infraction from the audit log, and in fact create a new entry in the audit log.
 
 You may view the audit log using `/auditlog`.
+The audit log includes infractions that have been cleared, appealed, or commuted,
+the history of those actions.
 
 For more information on how to use these commands please see the in game `/help` or the `plugin.yml`
 For more information on how to configure this plugin, please see the default `config.yml`.
-
-### Infraction histories & audit logs
-A set of moderator tools which logs all moderator actions,
 
 ### Manuals
 There are two built-in manuals: `/rules` and `/faq`.
@@ -66,12 +69,3 @@ It is also possible for moderators to (forcibly) show players portions of the ru
 as a brief reminder of the rules or to quickly answer a question they were asking.
 
 Please see the in-game `/help` menu or `plugin.yml` for more information on how to use these commands.
-
-## Current Features
-* Tracks how many zombies or husks a player kills.
-* Supports a ranking system for players based on the U.S. Marines' ranks.
-
-## Planned Features
-* Make zombies horde more intelligently.
-* Special world effects.
-* A lot of stuff, generally, but it's been a few months so I don't remember it all. I'll add it here when work begins again.

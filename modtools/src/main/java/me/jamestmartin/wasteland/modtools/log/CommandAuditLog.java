@@ -1,10 +1,10 @@
-package me.jamestmartin.wasteland.modtools.commands;
+package me.jamestmartin.wasteland.modtools.log;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class CommandUnban implements CommandExecutor {
+public class CommandAuditLog implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

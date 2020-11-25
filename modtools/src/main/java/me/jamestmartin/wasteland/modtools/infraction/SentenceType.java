@@ -1,6 +1,6 @@
 package me.jamestmartin.wasteland.modtools.infraction;
 
-public enum InfractionType {
+public enum SentenceType {
     BAN(true),
     KICK(false),
     MUTE(true),
@@ -8,7 +8,7 @@ public enum InfractionType {
     
     private final boolean hasduration;
     
-    private InfractionType(boolean hasDuration) {
+    private SentenceType(boolean hasDuration) {
         this.hasduration = hasDuration;
     }
     

@@ -5,23 +5,17 @@ import java.util.Optional;
 
 import org.bukkit.OfflinePlayer;
 
-public class Infraction {
-    /** The unique identifier of this infraction. */
-    private final int id;
+public class NewInfraction {
     /** The type of sentence the player received: ban, kick, mute, or warning. */
     private final SentenceType type;
     /** The moderator who issued the sentence. (Or empty, if it was issued by the console.) */
     private final Optional<OfflinePlayer> issuer;
     /** The player who committed the infraction. */
     private final OfflinePlayer recipient;
-    /** The time that the sentence was issued. */
-    private final Date issued;
-    /** The time that the sentence takes effect. */
-    private final Date start;
-    /** The time that the sentence naturally expires, if ever. */
-    private final Optional<Date> expiry;
-    /** The information about this infraction's repeal, if it was repealed. */
-    private final Optional<Repeal> repeal;
+    /** The time that the sentence takes effect, or empty if it starts immediately. */
+    private final Optional<Date> start;
+    /** The duration of the sentence. */
+    private final Duration duration;
     /** If this sentence was commuted, the identifier for the original infraction. */
     private final Optional<Integer> original;
     /** The section identifier for the rule that was violated. */
@@ -29,35 +23,76 @@ public class Infraction {
     /** The reason that an infraction was issued. */
     private final String reason;
     
-    public Infraction(
-            int id,
+    public NewInfraction(
             SentenceType type,
             Optional<OfflinePlayer> issuer,
             OfflinePlayer recipient,
-            Date issued,
-            Date start,
-            Optional<Date> expiry,
-            Optional<Repeal> repeal,
+            Optional<Date> start,
+            Duration duration,
             Optional<Integer> original,
             String rule,
             String reason
     ) {
-        this.id = id;
         this.type = type;
         this.issuer = issuer;
         this.recipient = recipient;
-        this.issued = issued;
         this.start = start;
-        this.expiry = expiry;
-        this.repeal = repeal;
+        this.duration = duration;
         this.original = original;
         this.rule = rule;
         this.reason = reason;
     }
     
-    /** @return The unique identifier for this infraction. */
-    public int getId() {
-        return id;
+    public NewInfraction(
+            SentenceType type,
+            Optional<OfflinePlayer> issuer,
+            OfflinePlayer recipient,
+            Duration duration,
+            String rule,
+            String reason
+    ) {
+        this.type = type;
+        this.issuer = issuer;
+        this.recipient = recipient;
+        this.start = Optional.empty();
+        this.duration = duration;
+        this.original = Optional.empty();
+        this.rule = rule;
+        this.reason = reason;
+    }
+    
+    /** Update an old infraction with a new expiry. */
+    public NewInfraction(
+            Optional<OfflinePlayer> issuer,
+            Duration duration,
+            Infraction original
+    ) {
+        this.type = original.getType();
+        this.issuer = issuer;
+        this.recipient = original.getRecipient();
+        this.start = Optional.of(original.getStart());
+        this.duration = duration;
+        this.original = Optional.of(original.getId());
+        this.rule = original.getRule();
+        this.reason = original.getReason();
+    }
+    
+    /** Update an old infraction with a new expiry and reason. */
+    public NewInfraction(
+            Optional<OfflinePlayer> issuer,
+            Duration duration,
+            Infraction original,
+            String rule,
+            String reason
+    ) {
+        this.type = original.getType();
+        this.issuer = issuer;
+        this.recipient = original.getRecipient();
+        this.start = Optional.of(original.getStart());
+        this.duration = duration;
+        this.original = Optional.of(original.getId());
+        this.rule = rule;
+        this.reason = reason;
     }
     
     /** @return The {@link SentenceType type of sentence} the player received: ban, kick, mute, or warning. */
@@ -75,52 +110,21 @@ public class Infraction {
         return recipient;
     }
     
-    /** @return The time the sentence was issued. */
-    public Date getIssued() {
-        return issued;
-    }
-    
     /**
-     * @return
-     *   <p>The time that the sentence first takes effect.
-     *   <p>
-     *      Generally, this will be the same time that it was issued;
-     *      however, if a sentence is commuted, the new infraction starts at the same time,
-     *      but will actually have a time issued *after* the sentence started!
+     * @return The time that the sentence first takes effect, or empty if it starts immediately.
      */
-    public Date getStart() {
+    public Optional<Date> getStart() {
         return start;
     }
     
     /** @return The time the infraction naturally expires if not repealed, if ever. */
-    public Optional<Date> getExpiry() {
-        return expiry;
-    }
-    
-    /**
-     * @return The duration that the sentence would last if not repealed.
-     * @see #getActualDuration()
-     */
-    public Duration getOriginalDuration() {
-        return Duration.fromDates(getStart(), getExpiry());
-    }
-    
-    /** @return The information about this infraction's repeal, if it was repealed. */
-    public Optional<Repeal> getRepeal() {
-        return repeal;
+    public Duration getDuration() {
+        return duration;
     }
     
     /** @return If this sentence was commuted, the identifier for the original infraction. */
     public Optional<Integer> getOriginal() {
         return original;
-    }
-    
-    /**
-     * @return The duration the sentence would last if it has been repealed, or otherwise the original duration.
-     * @see #getOriginalDuration()
-     */
-    public Duration getActualDuration() {
-        return Duration.fromDates(getStart(), getRepeal().map(Repeal::getIssued).or(() -> getExpiry()));
     }
     
     /** @return The rule that was violated. */

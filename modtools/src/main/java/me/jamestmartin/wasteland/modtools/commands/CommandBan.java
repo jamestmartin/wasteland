@@ -4,9 +4,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.jamestmartin.wasteland.modtools.config.DurationsConfig;
-import me.jamestmartin.wasteland.modtools.infraction.Infraction;
 import me.jamestmartin.wasteland.modtools.infraction.InfractionStore;
-import me.jamestmartin.wasteland.modtools.infraction.InfractionType;
+import me.jamestmartin.wasteland.modtools.infraction.NewInfraction;
+import me.jamestmartin.wasteland.modtools.infraction.SentenceType;
 
 public class CommandBan extends CommandIssueInfraction {
     public CommandBan(InfractionStore store, DurationsConfig durations) {
@@ -14,12 +14,12 @@ public class CommandBan extends CommandIssueInfraction {
     }
 
     @Override
-    protected InfractionType getType() {
-        return InfractionType.BAN;
+    protected SentenceType getType() {
+        return SentenceType.BAN;
     }
 
     @Override
-    protected void applyInfraction(CommandSender sender, Infraction infraction) {
+    protected void applyInfraction(CommandSender sender, NewInfraction infraction) {
         Player recipient = infraction.getRecipient().getPlayer();
         if (recipient != null) {
             recipient.kickPlayer(infraction.getMessage());

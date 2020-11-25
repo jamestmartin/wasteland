@@ -5,14 +5,19 @@ version: 0.1.0
 api-version: 1.16
 
 commands:
-   modlog:
+   auditlog:
       description: See the list of recent actions taken by moderators.
       usage: "Usage: /<command> [<duration>]"
       permission: wasteland.modtools.log
-      permission-message: You do not have permission to view the moderator log.
+      permission-message: You do not have permission to view the aduit log.
    infractions:
       description: See the list of infractions against the rules a player has committed.
-      usage: "Usage: /<infractions> <player> [<duration>]"
+      usage: |
+         Usage:
+            /<command> query <player> [<duration>]
+            /<command> commute <id> <duration> [<rule>] [<reason> ...]
+            /<command> clear <id>
+            /<command> appeal <id>
       permission: wasteland.modtools.infractions
       permission-message: You do not have permission to view players' infractions against the rules.
    
@@ -43,16 +48,6 @@ commands:
       usage: "Usage: /<command> <player> <duration> [<rule>] [<reason> ...]"
       permission: wasteland.modtools.ban.issue
       permission-message: You do not have permission to ban players.
-   unban:
-      description: Unban a player, allowing them to join again.
-      usage: "Usage: /<command> <player> [<reason> ...]"
-      permission: wasteland.modtools.ban.pardon
-      permission-message: You do not have permission to unban players.
-   bans:
-      description: See the list of all players currently banned from the server.
-      usage: "Usage: /<command> [<player>]"
-      permission: wasteland.modtools.ban.list
-      permission-message: You do not have permission to list banned players.
 
    kick:
       description: Kick a player from the server.
@@ -65,16 +60,6 @@ commands:
       usage: "Usage: /<command> <player> <duration> [<rule>] [<reason> ...]"
       permission: wasteland.modtools.mute.issue
       permission-message: You do not have permission to mute players.
-   unmute:
-      description: Unmute a player, allowing them to talk again.
-      usage: "Usage: /<command> <player> [<reason> ...]"
-      permission: wasteland.modtools.mute.pardon
-      permission-message: You do not have permission to unmute players.
-   mutes:
-      description: See the list of all players currently muted on the server.
-      usage: "Usage: /<command> [<player>]"
-      permission: wasteland.modtools.mutes.list
-      permission-message: You do not have permission to list muted players.
 
    warn:
       description: Give a player an official (logged) warning.
@@ -97,11 +82,11 @@ permissions:
       default: op
       children:
          wasteland.modtools.infractions: true
-         wasteland.modtools.ban.list: true
-         wasteland.modtools.mute.list: true
-         wasteland.modtools.warn.list: true
    wasteland.modtools.infractions:
       description: Allows you to see the list of infractions against the rules a player has committed.
+      default: op
+   wasteland.modtools.infractions.clear:
+      description: Allows you to clear infractions from players' permanent records.
       default: op
       
    wasteland.modtools.uuid:
@@ -151,20 +136,16 @@ permissions:
          wasteland.manual.faq: true
    
    wasteland.modtools.ban:
-      description: Allows you to ban or unban a player, or list active bans.
+      description: Allows you to ban or unban a player.
       default: op
       children:
          wasteland.modtools.ban.issue: true
-         wasteland.modtools.ban.list: true
          wasteland.modtools.ban.pardon: true
    wasteland.modtools.ban.issue:
       description: Allows you to issue bans.
       default: op
-   wasteland.modtools.ban.list:
-      description: Allows you to list all active bans.
-      default: op
-   wasteland.modtools.ban.pardon:
-      description: Allows you to remove bans.
+   wasteland.modtools.ban.commute:
+      description: Allows you to commute bans.
       default: op
         
    wasteland.modtools.kick:
@@ -172,20 +153,15 @@ permissions:
       default: op
    
    wasteland.modtools.mute:
-      description: Allows you to mute or unmute a player, or list active mutes.
-      default: op
+      description: Allows you to mute or unmute a player.
       children:
          wasteland.modtools.mute.issue: true
-         wasteland.modtools.mute.list: true
          wasteland.modtools.mute.pardon: true
    wasteland.modtools.mute.issue:
       description: Allows you to issue mutes.
       default: op
-   wasteland.modtools.mute.list:
-      description: Allows you to list active mutes.
-      default: op
-   wasteland.modtools.mute.pardon:
-      description: Allows you to remove mutes.
+   wasteland.modtools.mute.commute:
+      description: Allows you to commute mutes.
       default: op
    
    wasteland.modtools.warn:

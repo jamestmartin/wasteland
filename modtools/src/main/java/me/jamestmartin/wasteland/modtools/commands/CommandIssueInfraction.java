@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 
 import me.jamestmartin.wasteland.modtools.config.DurationsConfig;
 import me.jamestmartin.wasteland.modtools.infraction.Duration;
-import me.jamestmartin.wasteland.modtools.infraction.Infraction;
 import me.jamestmartin.wasteland.modtools.infraction.InfractionStore;
-import me.jamestmartin.wasteland.modtools.infraction.InfractionType;
+import me.jamestmartin.wasteland.modtools.infraction.NewInfraction;
+import me.jamestmartin.wasteland.modtools.infraction.SentenceType;
 
 abstract class CommandIssueInfraction implements CommandExecutor {
     protected final InfractionStore store;
@@ -41,13 +41,13 @@ abstract class CommandIssueInfraction implements CommandExecutor {
         }
 
         Player issuer = sender instanceof Player ? (Player) sender : null;
-        Optional<Infraction> maybe = parseArgs(getType(), issuer, args);
+        Optional<NewInfraction> maybe = parseArgs(getType(), issuer, args);
         if (maybe.isEmpty()) {
             // TOOD: better error messages
             sender.sendMessage("Invalid syntax.");
             return false;
         }
-        Infraction infraction = maybe.get();
+        NewInfraction infraction = maybe.get();
         
         if (infraction.getDuration().compareTo(maxDuration) == 1) {
             sender.sendMessage("You are not allowed you issue an infraction of duration " + infraction.getDuration() + ".");
@@ -57,15 +57,15 @@ abstract class CommandIssueInfraction implements CommandExecutor {
         }
         
         applyInfraction(sender, infraction);
-        store.addInfraction(infraction);
+        store.issueInfraction(infraction);
         return false;
     }
     
-    protected abstract InfractionType getType();
+    protected abstract SentenceType getType();
     
-    protected abstract void applyInfraction(CommandSender sender, Infraction infraction);
+    protected abstract void applyInfraction(CommandSender sender, NewInfraction infraction);
     
-    private static Optional<Infraction> parseArgs(InfractionType type, OfflinePlayer issuer, String[] args) {
+    private static Optional<NewInfraction> parseArgs(SentenceType type, OfflinePlayer issuer, String[] args) {
         // TODO
         return null;
     }

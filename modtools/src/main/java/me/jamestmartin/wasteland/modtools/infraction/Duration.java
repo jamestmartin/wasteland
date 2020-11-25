@@ -1,6 +1,7 @@
 package me.jamestmartin.wasteland.modtools.infraction;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -169,5 +170,16 @@ public class Duration implements Comparable<Duration> {
         }
         
         return Long.compare(getSeconds().get(), other.getSeconds().get());
+    }
+    
+    public static Duration fromDates(Date begin, Date end) {
+        return new Duration(end.getTime() - begin.getTime());
+    }
+    
+    public static Duration fromDates(Date begin, Optional<Date> end) {
+        if (end.isEmpty()) {
+            return INFINITY;
+        }
+        return fromDates(begin, end.get());
     }
 }
