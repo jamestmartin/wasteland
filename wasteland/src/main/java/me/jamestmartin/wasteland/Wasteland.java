@@ -18,10 +18,27 @@ public class Wasteland extends JavaPlugin {
     private WastelandConfig config;
     private WastelandState state;
 	
+    /**
+     * The active, enabled instance of this plugin.
+     * 
+     * @return
+     *   May be null if the plugin:
+     *   <ul>
+     *     <li>has been loaded but not yet enabled,
+     *     <li>has been disabled,
+     *     <li>is in the process of reloading.
+     *   </ul>
+     */
 	public static Wasteland getInstance() {
 		return instance;
 	}
 	
+	/**
+	 * @return
+	 *   Either the proxy for accessing Towny if the plugin is loaded,
+	 *   or a dummy implementation.
+	 * @see TownyDependency
+	 */
 	public static TownyDependency getTowny() {
 	    return towny;
 	}
@@ -43,12 +60,18 @@ public class Wasteland extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+	    // We do not need to disable 
 	    state.disable(this);
 	    state = null;
 		towny = null;
 		instance = null;
 	}
 	
+	/**
+	 * Completely disable and re-enable the plugin,
+	 * which has the effect of reloading the plugin's configuration
+	 * and database.
+	 */
 	public void reload() {
 	    getLogger().info("Reloading wasteland...");
         saveDefaultConfig();
@@ -64,6 +87,7 @@ public class Wasteland extends JavaPlugin {
         config = ConfigParser.parseConfig(getConfig());
     }
 	
+    /** Register all commands, listeners, permission attachments, etc. */
 	private void register() {
 	    try {
 	        state = new WastelandState(config);
@@ -80,6 +104,7 @@ public class Wasteland extends JavaPlugin {
         state.register(this);
 	}
 	
+	/** Disable all commands, unregister all listeners and permission attachments, etc. */
 	private void unregister() {
 	    state.unregister(this);
 	    state = null;

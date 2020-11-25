@@ -8,32 +8,34 @@ version '0.1.0'
 sourceCompatibility = 14
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 
-  maven {
-    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 
-    content {
-      includeGroup 'org.bukkit'
-      includeGroup 'org.spigotmc'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
     }
-  }
 
-  maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 
-  maven {
-    name = "Towny"
-    url = "https://maven.pkg.github.com/TownyAdvanced/Towny"
-    credentials {
-      username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-      password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+    maven {
+        name = "Towny"
+        url = "https://maven.pkg.github.com/TownyAdvanced/Towny"
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+        }
     }
-  }
 }
 
 dependencies {
-  compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
-  compileOnly 'com.palmergames.bukkit.towny:Towny:0.96.2.17'
-  compileOnly 'com.google.guava:guava:21.0'
-  // compileOnly 'com.google.guava:guava:27.1
+    // APIs and libraries provided with the server distribution
+    compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
+    compileOnly 'com.google.guava:guava:21.0'
+
+    // Plugin APIs
+    compileOnly 'com.palmergames.bukkit.towny:Towny:0.96.2.17'
 }

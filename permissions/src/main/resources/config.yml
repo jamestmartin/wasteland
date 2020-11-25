@@ -1,5 +1,14 @@
 #
+# Groups are collections of permissions which make it easier to assign a set of permissions to a lot of players at once.
+# It also makes it easier to define permission hierarchies (e.g. trial mod, mod, head mod, admin),
+# through the inheritence mechanism.
+#
+# However, you are not required to use them and can assign permissions directly to players if you choose.
+#
 # groups:
+#  # The default group will only be assigned to players with no other group assigned.
+#  # If you assign a player a group, they will not receive the default permissions,
+#  # unless you explicitly unclude them as a member of this group.
 #  default:
 #    permission.for.newbies: true  # track a player's permission
 #  <groupName>:
@@ -16,7 +25,7 @@
 #        c.d: true
 #
 # players:
-#   # You *must* use player UUIDs, not player names.
+#   # You *must* use player UUIDs, not player names, because player names are not guaranteed to be unique across sessions.
 #   # You can see a player's UUID in the server log when they join, or look it up online.
 #   # I would recommend including the player's name as a comment to help you remember whose UUID this is.
 #   <player-uuid>:

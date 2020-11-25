@@ -69,7 +69,7 @@ public class ChatConfig implements ChatFormatter {
     }
     
     private String formatPlayerTownPrefix(Player player) {
-        Optional<String> townTag = Wasteland.getTowny().getTownAbbreviation(player);
+        Optional<String> townTag = Wasteland.getTowny().getTownTag(player);
         if (townTag.isEmpty()) {
             return "";
         }

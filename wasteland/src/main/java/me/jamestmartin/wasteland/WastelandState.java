@@ -15,7 +15,15 @@ import me.jamestmartin.wasteland.spawns.SpawnsState;
 import me.jamestmartin.wasteland.store.StoreState;
 import me.jamestmartin.wasteland.store.sqlite.SqliteState;
 
-public class WastelandState implements Substate {
+/**
+ * This class contains virtually all of the plugin's internal state.
+ * Keeping this out of {@link Wasteland the plugin's main class}
+ * makes it easier to keep track of and reload,
+ * because we can reset the plugin's state just by setting this to null
+ * and creating a new instance,
+ * rather than having to handle each sub-state individually.
+ */
+class WastelandState implements Substate {
     private final CommandWasteland commandWasteland;
     
     private final StoreState storeState;

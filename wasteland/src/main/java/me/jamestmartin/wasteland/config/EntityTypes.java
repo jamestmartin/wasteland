@@ -5,13 +5,20 @@ import java.util.HashSet;
 
 import org.bukkit.entity.EntityType;
 
+/**
+ * Collections of {@link EntityType}s.
+ * 
+ * The primary purpose of this class is to provide {@link #lookupEntityType(String)}.
+ */
 class EntityTypes {
-    private static final EntityType[] BOSSES = {
+    /** The ender dragon and wither. */
+    public static final EntityType[] BOSSES = {
             EntityType.ENDER_DRAGON,
             EntityType.WITHER,
     };
     
-    private static final EntityType[] HOSTILES = {
+    /** Monsters which will attack the player on sight. */
+    public static final EntityType[] HOSTILES = {
             EntityType.BLAZE,
             EntityType.CREEPER,
             EntityType.DROWNED,
@@ -44,7 +51,8 @@ class EntityTypes {
             EntityType.ZOMBIE_VILLAGER,
     };
     
-    private static final EntityType[] NEUTRALS = {
+    /** Mobs which will attack the player only if provoked. */
+    public static final EntityType[] NEUTRALS = {
             EntityType.BEE,
             EntityType.CAVE_SPIDER,
             EntityType.DOLPHIN,
@@ -62,21 +70,23 @@ class EntityTypes {
     
     /**
      * Monsters which are eligible for the monster hunter achievement but are not hostile.
-     * All hostile monsters are eligable.
+     * All hostile monsters are eligible.
      */
-    private static final EntityType[] NON_HOSTILE_MONSTERS = {
+    public static final EntityType[] NON_HOSTILE_MONSTERS = {
             EntityType.CAVE_SPIDER,
             EntityType.ENDERMAN,
             EntityType.SPIDER,
             EntityType.ZOMBIFIED_PIGLIN,
     };
     
-    private static final EntityType[] SPIDERS = {
+    /** Spiders and cave spiders. */
+    public static final EntityType[] SPIDERS = {
             EntityType.CAVE_SPIDER,
             EntityType.SPIDER,
     };
     
-    private static final EntityType[] ZOMBIES = {
+    /** All zombie variants, including zombie villagers, zoglins, etc. */
+    public static final EntityType[] ZOMBIES = {
             EntityType.GIANT,
             EntityType.ZOGLIN,
             EntityType.ZOMBIE,
@@ -85,6 +95,22 @@ class EntityTypes {
             EntityType.ZOMBIFIED_PIGLIN,
     };
     
+    /**
+     * @param typeName
+     *   Either a string representing an EntityType value,
+     *   or a lower-case string representing one of the entity collections provided by this class.
+     * @return
+     *   Either the single entity type represented by the string provided,
+     *   or the collection of entity types specified by the string provided.
+     * 
+     * @see EntityType#valueOf(String)
+     * @see BOSSES bosses
+     * @see HOSTILES hostiles
+     * @see NEUTRALS neutrals
+     * @see NON_HOSTILE_MONSTERS monsters
+     * @see SPIDERS spiders
+     * @see ZOMBIES zombies
+     */
     public static EntityType[] lookupEntityType(String typeName) {
         switch(typeName) {
             case "bosses":
