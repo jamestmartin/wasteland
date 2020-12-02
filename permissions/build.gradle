@@ -8,19 +8,19 @@ version '0.1.0'
 sourceCompatibility = 8
 
 repositories {
-  mavenCentral()
-  maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-  maven {
-    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    mavenCentral()
 
-    content {
-      includeGroup 'org.bukkit'
-      includeGroup 'org.spigotmc'
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
     }
-  }
 }
 
 dependencies {
-  compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
-  compileOnly 'com.google.guava:guava:21.0'
+    compileOnly 'org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT'
+    compileOnly 'com.google.guava:guava:21.0'
 }

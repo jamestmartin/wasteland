@@ -5,7 +5,7 @@ plugins {
 group 'me.jamestmartin'
 version '0.1.0'
 
-sourceCompatibility = 14
+sourceCompatibility = 8
 
 repositories {
     mavenCentral()
@@ -19,14 +19,16 @@ repositories {
         }
     }
 
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-
     maven {
         name = "Towny"
         url = "https://maven.pkg.github.com/TownyAdvanced/Towny"
         credentials {
             username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
             password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+        }
+
+        content {
+            includeGroup 'com.palmergames.bukkit.towny'
         }
     }
 }
